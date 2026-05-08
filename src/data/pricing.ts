@@ -25,7 +25,7 @@ export const PRICING: Record<string, ModelPricing> = {
   'mistral-small-24b':   { inputPer1M: 0.10,  outputPer1M: 0.30,  groqAvailable: false, freeTier: 'Gratis self-hosted' },
   'mistral-nemo-12b':    { inputPer1M: 0.15,  outputPer1M: 0.15,  groqAvailable: false, freeTier: 'Gratis self-hosted' },
   'ministral-8b':        { inputPer1M: 0.10,  outputPer1M: 0.10,  groqAvailable: false, freeTier: 'Gratis self-hosted' },
-  'mistral-7b':          { inputPer1M: 0.25,  outputPer1M: 0.25,  groqModelId: 'mixtral-8x7b-32768', groqAvailable: true, freeTier: 'Gratis self-hosted' },
+  'mistral-7b':          { inputPer1M: 0.25,  outputPer1M: 0.25,  groqAvailable: false, freeTier: 'Gratis self-hosted' },
   'mixtral-8x22b':       { inputPer1M: 0.65,  outputPer1M: 0.65,  groqAvailable: false, freeTier: 'Gratis self-hosted' },
 
   // ── Meta Llama ──────────────────────────────────────────────────────────────
@@ -152,5 +152,5 @@ export function calcMonthlyCostEur(
 export const PLAYGROUND_MODELS = [
   { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B',    inputPer1M: 0.59, outputPer1M: 0.79 },
   { id: 'llama-3.1-8b-instant',    name: 'Llama 3.1 8B',     inputPer1M: 0.05, outputPer1M: 0.08 },
-  { id: 'mixtral-8x7b-32768',      name: 'Mixtral 8x7B',     inputPer1M: 0.24, outputPer1M: 0.24 },
+  { id: 'gemma2-9b-it',            name: 'Gemma 2 9B',       inputPer1M: 0.20, outputPer1M: 0.20 },
 ];
