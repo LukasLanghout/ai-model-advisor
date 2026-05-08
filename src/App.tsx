@@ -5,16 +5,31 @@ import IntroScreen from './components/IntroScreen';
 import ConversationView from './components/Conversation/ConversationView';
 import LoadingScreen from './components/LoadingScreen';
 import RecommendationsView from './components/Results/RecommendationsView';
+import ModelSearchPage from './components/ModelExplorer/ModelSearchPage';
 
 export default function App() {
-  const [appStep, setAppStep] = useState<AppStep>('intro');
+  const [appStep, setAppStep]   = useState<AppStep>('intro');
+  const [prevStep, setPrevStep] = useState<AppStep>('intro');
   const [scenario, setScenario] = useState<ExtractedScenario | null>(null);
-  const [result, setResult] = useState<RecommendationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [result, setResult]     = useState<RecommendationResult | null>(null);
+  const [error, setError]       = useState<string | null>(null);
+
+  function goTo(step: AppStep) {
+    setPrevStep(appStep);
+    setAppStep(step);
+  }
+
+  function toggleExplorer() {
+    if (appStep === 'explorer') {
+      setAppStep(prevStep === 'explorer' ? 'intro' : prevStep);
+    } else {
+      goTo('explorer');
+    }
+  }
 
   async function handleScenarioReady(extractedScenario: ExtractedScenario) {
     setScenario(extractedScenario);
-    setAppStep('loading');
+    goTo('loading');
     setError(null);
 
     try {
@@ -31,7 +46,7 @@ export default function App() {
 
       const data: RecommendationResult = await res.json();
       setResult(data);
-      setAppStep('results');
+      goTo('results');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden.');
       setAppStep('conversation');
@@ -47,11 +62,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header onExplorer={toggleExplorer} explorerActive={appStep === 'explorer'} />
+
       <main id="main-content" className="flex-1">
+        {appStep === 'explorer' && <ModelSearchPage />}
+
         {appStep === 'intro' && (
-          <IntroScreen onStart={() => setAppStep('conversation')} />
+          <IntroScreen onStart={() => goTo('conversation')} />
         )}
+
         {appStep === 'conversation' && (
           <div>
             {error && (
@@ -64,7 +83,9 @@ export default function App() {
             <ConversationView onReady={handleScenarioReady} />
           </div>
         )}
+
         {appStep === 'loading' && <LoadingScreen />}
+
         {appStep === 'results' && result && scenario && (
           <RecommendationsView
             result={result}
@@ -73,6 +94,7 @@ export default function App() {
           />
         )}
       </main>
+
       <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">
         Gebouwd door{' '}
         <a

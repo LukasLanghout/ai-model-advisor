@@ -83,4 +83,19 @@ export interface PlaygroundResult {
 }
 
 // ── App state ──────────────────────────────────────────────
-export type AppStep = 'intro' | 'conversation' | 'loading' | 'results';
+export type AppStep = 'intro' | 'conversation' | 'loading' | 'results' | 'explorer';
+
+// ── Model Explorer ─────────────────────────────────────────
+export interface ModelInfoResult {
+  summary: string;
+  strengths: string[];
+  useCases: string[];
+  limitations: string[];
+  alternatives: string[];
+  hfData?: {
+    downloads: number;
+    likes: number;
+    tags: string[];
+    inference: string;
+  };
+}
