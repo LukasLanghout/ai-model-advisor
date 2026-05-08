@@ -255,45 +255,33 @@ interface ModelCardProps {
 
 function ModelCard({ model, onSelect }: ModelCardProps) {
   const reduced = useReducedMotion();
-  const typeColor =
-    model.type === 'open-source' ? 'bg-green-50 text-green-700 border-green-200' :
-    model.type === 'cloud'       ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                   'bg-purple-50 text-purple-700 border-purple-200';
-
   return (
     <motion.button
       type="button"
       onClick={() => onSelect({ id: model.id, name: model.name })}
-      whileHover={reduced ? {} : { y: -2, boxShadow: '0 6px 20px rgba(0,0,0,0.08)' }}
-      whileTap={reduced ? {} : { scale: 0.98 }}
-      transition={{ duration: 0.15 }}
-      className="w-full text-left bg-white border border-slate-200 rounded-xl p-4 hover:border-brand-300 transition-colors group"
+      whileHover={reduced ? {} : { y: -1 }}
+      whileTap={reduced ? {} : { scale: 0.99 }}
+      transition={{ duration: 0.12 }}
+      className="w-full text-left bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:shadow-sm transition-all group"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-brand-600 transition-colors">
+          <p className="text-sm font-medium text-slate-800 truncate">
             {model.name}
           </p>
           <p className="text-xs text-slate-400 font-mono truncate mt-0.5">{model.id}</p>
         </div>
-        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-500 flex-shrink-0 mt-0.5 transition-colors" />
+        <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-500 flex-shrink-0 mt-0.5 transition-colors" />
       </div>
 
       <div className="flex flex-wrap gap-1.5 mt-2.5">
-        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-          {model.provider}
-        </span>
-        <span className={`text-xs px-2 py-0.5 rounded-full border ${typeColor}`}>
-          {model.type === 'open-source' ? 'Open Source' : model.type === 'cloud' ? 'Cloud' : 'Hybrid'}
-        </span>
+        <span className="text-xs text-slate-400">{model.provider}</span>
         {model.params && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-brand-50 text-brand-600">
-            {model.params}
-          </span>
+          <span className="text-xs text-slate-400">· {model.params}</span>
         )}
         {model.source === 'huggingface' && model.downloads !== undefined && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-600">
-            {model.downloads >= 1_000_000
+          <span className="text-xs text-slate-400">
+            · {model.downloads >= 1_000_000
               ? `${(model.downloads / 1_000_000).toFixed(1)}M ↓`
               : `${Math.round(model.downloads / 1000)}K ↓`}
           </span>

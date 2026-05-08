@@ -20,10 +20,10 @@ export default function Header({ onExplorer, explorerActive }: Props) {
           {/* Logo */}
           <div className="flex items-center gap-3 min-w-0">
             <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-600 flex-shrink-0"
+              className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 flex-shrink-0"
               aria-hidden="true"
             >
-              <Brain className="w-5 h-5 text-white" />
+              <Brain className="w-4 h-4 text-white" />
             </div>
             <div className="min-w-0">
               <span className="font-semibold text-slate-900 text-base leading-tight block truncate">
@@ -40,10 +40,10 @@ export default function Header({ onExplorer, explorerActive }: Props) {
             type="button"
             onClick={onExplorer}
             aria-pressed={explorerActive}
-            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-xl transition-colors ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               explorerActive
-                ? 'bg-brand-600 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-brand-50 hover:text-brand-600'
+                ? 'bg-slate-900 text-white'
+                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
             }`}
           >
             <Search className="w-4 h-4" />

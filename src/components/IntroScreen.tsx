@@ -7,11 +7,11 @@ interface Props {
 
 const cardContainer = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.25 } },
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
 };
 const cardItem = {
-  hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } },
+  hidden: { opacity: 0, y: 10 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' as const } },
 };
 
 export default function IntroScreen({ onStart }: Props) {
@@ -22,33 +22,28 @@ export default function IntroScreen({ onStart }: Props) {
       {/* Hero */}
       <motion.div
         className="text-center mb-16"
-        initial={reduced ? false : { opacity: 0, y: 24 }}
+        initial={reduced ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: 'easeOut' }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        <span className="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-medium mb-4">
+        <span className="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-medium mb-4 tracking-wide">
           Persoonlijk project · Lukas Langhout
         </span>
         <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-5 leading-tight">
           Welk AI-model past<br />
-          <span className="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">
-            bij jouw situatie?
-          </span>
+          <span className="text-brand-600">bij jouw situatie?</span>
         </h1>
-        <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-8">
+        <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
           Voer een kort discovery-gesprek. Llama 3.3 via Groq analyseert je context en geeft
           onderbouwde aanbevelingen met kostenraming, compliance-check en live playground.
         </p>
-        <motion.button
+        <button
           onClick={onStart}
-          whileHover={reduced ? {} : { scale: 1.03, y: -1 }}
-          whileTap={reduced ? {} : { scale: 0.97 }}
-          transition={{ duration: 0.15 }}
-          className="inline-flex items-center gap-2 px-7 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-sm text-base"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors text-sm"
         >
           Start het gesprek
-          <ArrowRight className="w-5 h-5" />
-        </motion.button>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </motion.div>
 
       {/* Feature cards — staggered reveal */}
@@ -69,30 +64,26 @@ export default function IntroScreen({ onStart }: Props) {
           <motion.div
             key={title}
             variants={cardItem}
-            whileHover={reduced ? {} : { y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
-            transition={{ duration: 0.18 }}
-            className="bg-white rounded-2xl border border-slate-200 p-6"
+            className="bg-white rounded-xl border border-slate-200 p-5"
           >
-            <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center mb-4">
-              <Icon className="w-5 h-5 text-brand-600" />
-            </div>
-            <h3 className="font-semibold text-slate-900 mb-1">{title}</h3>
-            <p className="text-sm text-slate-500">{desc}</p>
+            <Icon className="w-4 h-4 text-slate-400 mb-3" />
+            <h3 className="font-medium text-slate-800 mb-1 text-sm">{title}</h3>
+            <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
           </motion.div>
         ))}
       </motion.div>
 
       {/* Models covered — scroll-triggered */}
       <motion.div
-        className="bg-gradient-to-br from-white to-brand-50/30 rounded-2xl border border-slate-200 p-8"
-        initial={reduced ? false : { opacity: 0, y: 24 }}
+        className="bg-white rounded-xl border border-slate-200 p-8"
+        initial={reduced ? false : { opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
       >
-        <h2 className="font-semibold text-slate-900 mb-1">106 modellen vergeleken</h2>
-        <p className="text-sm text-slate-400 mb-4">Van ultra-lichte edge-modellen tot state-of-the-art MoE — alle llmfit-modellen inbegrepen.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <h2 className="font-medium text-slate-800 mb-1">106 modellen vergeleken</h2>
+        <p className="text-sm text-slate-400 mb-5">Van ultra-lichte edge-modellen tot state-of-the-art MoE.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4">
           {[
             'Claude 3.5 Sonnet', 'GPT-4o', 'Gemini 1.5 Pro',
             'Llama 3.3 70B', 'Llama 4 Scout', 'Llama 4 Maverick',
@@ -103,8 +94,7 @@ export default function IntroScreen({ onStart }: Props) {
             'StarCoder2 15B', 'Falcon3 10B', 'BLOOM 176B',
             'Command R 35B', 'Kimi K2 1T', '+ meer...',
           ].map((model) => (
-            <div key={model} className="flex items-center gap-2 text-sm text-slate-600">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
+            <div key={model} className="text-sm text-slate-500">
               {model}
             </div>
           ))}
