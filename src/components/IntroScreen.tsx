@@ -18,7 +18,7 @@ export default function IntroScreen({ onStart }: Props) {
         </h1>
         <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-8">
           Beantwoord 6 gerichte vragen over je use case, schaal, budget en privacyvereisten.
-          Claude analyseert je situatie en geeft aanbevelingen met uitleg.
+          Llama 3.3 via Groq analyseert je situatie en geeft aanbevelingen met uitleg.
         </p>
         <button
           onClick={onStart}

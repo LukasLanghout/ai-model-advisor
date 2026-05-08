@@ -94,7 +94,7 @@ export default function App() {
         >
           Lukas Langhout
         </a>{' '}
-        · Aangedreven door Claude API
+        · Aangedreven door Llama 3.3 via Groq
       </footer>
     </div>
   );
