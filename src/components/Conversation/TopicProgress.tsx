@@ -21,15 +21,24 @@ export default function TopicProgress({ covered }: Props) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4">
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+      <p
+        className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3"
+        id="topic-progress-label"
+      >
         Onderwerpen ({covered.length}/{allTopics.length})
       </p>
-      <div className="flex flex-wrap gap-2">
+      {/* role="list" + aria-labelledby for screen reader context */}
+      <ul
+        role="list"
+        aria-labelledby="topic-progress-label"
+        className="flex flex-wrap gap-2"
+      >
         {allTopics.map((topic) => {
           const done = coveredSet.has(topic);
           return (
-            <div
+            <li
               key={topic}
+              aria-label={`${TOPIC_LABELS[topic]}: ${done ? 'besproken' : 'nog niet besproken'}`}
               className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full transition-colors ${
                 done
                   ? 'bg-green-50 text-green-700 border border-green-200'
@@ -37,15 +46,15 @@ export default function TopicProgress({ covered }: Props) {
               }`}
             >
               {done ? (
-                <CheckCircle2 className="w-3 h-3" />
+                <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
               ) : (
-                <Circle className="w-3 h-3" />
+                <Circle className="w-3 h-3" aria-hidden="true" />
               )}
               {TOPIC_LABELS[topic]}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }

@@ -15,20 +15,16 @@ interface Props {
 
 const TABS = [
   { id: 'aanbevelingen', label: 'Aanbevelingen' },
-  { id: 'beslissing', label: 'Beslissingspad' },
-  { id: 'kosten', label: 'Kosten' },
-  { id: 'playground', label: 'Playground' },
-  { id: 'compliance', label: 'Compliance' },
+  { id: 'beslissing',    label: 'Beslissingspad' },
+  { id: 'kosten',        label: 'Kosten' },
+  { id: 'playground',   label: 'Playground' },
+  { id: 'compliance',   label: 'Compliance' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
 
 export default function RecommendationsView({ result, onRestart }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('aanbevelingen');
-
-  function handlePrint() {
-    window.print();
-  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 animate-slide-up print-container">
@@ -38,21 +34,23 @@ export default function RecommendationsView({ result, onRestart }: Props) {
           <h2 className="text-2xl font-bold text-slate-900">Jouw AI aanbeveling</h2>
           <p className="text-sm text-slate-500 mt-1">Op basis van je discovery gesprek</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 no-print">
           <button
             type="button"
-            onClick={handlePrint}
-            className="no-print inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+            onClick={() => window.print()}
+            aria-label="Exporteer als PDF"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-4 h-4" aria-hidden="true" />
             PDF exporteren
           </button>
           <button
             type="button"
             onClick={onRestart}
-            className="no-print inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+            aria-label="Opnieuw beginnen"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4" aria-hidden="true" />
             Opnieuw
           </button>
         </div>
@@ -60,7 +58,9 @@ export default function RecommendationsView({ result, onRestart }: Props) {
 
       {/* Summary */}
       <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-2xl p-6 sm:p-8 mb-6 text-white">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-2">Samenvatting</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-2">
+          Samenvatting
+        </p>
         <p className="text-base sm:text-lg leading-relaxed">{result.summary}</p>
       </div>
 
@@ -68,13 +68,13 @@ export default function RecommendationsView({ result, onRestart }: Props) {
       {result.keyConsiderations?.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Lightbulb className="w-4 h-4 text-amber-600" />
+            <Lightbulb className="w-4 h-4 text-amber-600" aria-hidden="true" />
             <span className="text-sm font-semibold text-amber-800">Belangrijke overwegingen</span>
           </div>
-          <ul className="space-y-1.5">
+          <ul className="space-y-1.5" role="list">
             {result.keyConsiderations.map((c) => (
               <li key={c} className="text-sm text-amber-800 flex items-start gap-2">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
                 {c}
               </li>
             ))}
@@ -82,18 +82,26 @@ export default function RecommendationsView({ result, onRestart }: Props) {
         </div>
       )}
 
-      {/* Tabs */}
+      {/* Tabs — role="tablist" for proper ARIA semantics (Priority 1 + 9) */}
       <div className="no-print border-b border-slate-200 mb-6">
-        <div className="flex gap-1 overflow-x-auto">
+        <div
+          role="tablist"
+          aria-label="Resultaat secties"
+          className="flex gap-1 overflow-x-auto"
+        >
           {TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              id={`tab-${tab.id}`}
+              aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-shrink-0 px-4 py-2.5 min-h-[44px] text-sm font-medium border-b-2 transition-colors focus-visible:outline-2 focus-visible:outline-brand-500 focus-visible:outline-offset-2 ${
                 activeTab === tab.id
                   ? 'border-brand-600 text-brand-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
               {tab.label}
@@ -102,51 +110,51 @@ export default function RecommendationsView({ result, onRestart }: Props) {
         </div>
       </div>
 
-      {/* Tab content */}
+      {/* Tab panels */}
       <div className="min-h-[400px]">
-        {activeTab === 'aanbevelingen' && (
-          <div className="space-y-4">
-            {result.topThreeComparison && (
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Top 3 vergelijking: </span>
-                {result.topThreeComparison}
-              </div>
+        {TABS.map((tab) => (
+          <div
+            key={tab.id}
+            role="tabpanel"
+            id={`tabpanel-${tab.id}`}
+            aria-labelledby={`tab-${tab.id}`}
+            hidden={activeTab !== tab.id}
+          >
+            {activeTab === tab.id && (
+              <>
+                {tab.id === 'aanbevelingen' && (
+                  <div className="space-y-4">
+                    {result.topThreeComparison && (
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
+                        <span className="font-semibold text-slate-700">Top 3 vergelijking: </span>
+                        {result.topThreeComparison}
+                      </div>
+                    )}
+                    {result.recommendations.map((rec, i) => (
+                      <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
+                    ))}
+                  </div>
+                )}
+                {tab.id === 'beslissing' && (
+                  <DecisionTree
+                    decisionFactors={result.decisionFactors}
+                    topRecommendation={result.recommendations[0]}
+                    summary={result.summary}
+                  />
+                )}
+                {tab.id === 'kosten' && (
+                  <CostCalculator recommendations={result.recommendations} />
+                )}
+                {tab.id === 'playground' && (
+                  <PlaygroundView />
+                )}
+                {tab.id === 'compliance' && (
+                  <ComplianceTable recommendations={result.recommendations} />
+                )}
+              </>
             )}
-            {result.recommendations.map((rec, i) => (
-              <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
-            ))}
           </div>
-        )}
-
-        {activeTab === 'beslissing' && (
-          <DecisionTree
-            decisionFactors={result.decisionFactors}
-            topRecommendation={result.recommendations[0]}
-            summary={result.summary}
-          />
-        )}
-
-        {activeTab === 'kosten' && (
-          <CostCalculator recommendations={result.recommendations} />
-        )}
-
-        {activeTab === 'playground' && (
-          <PlaygroundView />
-        )}
-
-        {activeTab === 'compliance' && (
-          <ComplianceTable recommendations={result.recommendations} />
-        )}
-      </div>
-
-      {/* Print-only: show all sections */}
-      <div className="print-only hidden">
-        <div className="mt-8">
-          <h3 className="text-lg font-bold mb-4">Aanbevelingen</h3>
-          {result.recommendations.map((rec, i) => (
-            <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );

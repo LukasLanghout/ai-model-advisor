@@ -18,6 +18,7 @@ export default function ConversationView({ onReady }: Props) {
   const [started, setStarted] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesId = 'conversation-messages';
 
   useEffect(() => {
     startConversation();
@@ -102,10 +103,6 @@ export default function ConversationView({ onReady }: Props) {
     }
   }
 
-  function handleTemplate(message: string) {
-    handleSend(message);
-  }
-
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
       <div className="mb-6">
@@ -117,10 +114,22 @@ export default function ConversationView({ onReady }: Props) {
 
       <TopicProgress covered={coveredTopics} />
 
-      <div className="mt-4 bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col" style={{ height: '420px' }}>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Chat panel — flex column, min-height responsive instead of fixed px */}
+      <section
+        aria-label="Gesprek"
+        className="mt-4 bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col"
+        style={{ minHeight: '380px', maxHeight: '520px' }}
+      >
+        {/* Messages — aria-live so screen readers announce new bubbles */}
+        <div
+          id={messagesId}
+          role="log"
+          aria-live="polite"
+          aria-label="Gespreksberichten"
+          className="flex-1 overflow-y-auto p-4 space-y-4"
+        >
           {!started && (
-            <div className="flex justify-start">
+            <div className="flex justify-start" aria-hidden="true">
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Even wachten...
@@ -131,11 +140,17 @@ export default function ConversationView({ onReady }: Props) {
             <MessageBubble key={i} message={msg} />
           ))}
           {isLoading && messages.length > 0 && (
-            <div className="flex justify-start">
-              <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold mr-2 mt-0.5 flex-shrink-0">
+            <div className="flex justify-start" aria-label="AI is aan het typen">
+              <div
+                className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold mr-2 mt-0.5 flex-shrink-0"
+                aria-hidden="true"
+              >
                 AI
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+              <div
+                className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm"
+                aria-hidden="true"
+              >
                 <div className="flex gap-1">
                   <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -148,36 +163,44 @@ export default function ConversationView({ onReady }: Props) {
         </div>
 
         {hint && (
-          <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
+          <div role="note" className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
             💡 {hint}
           </div>
         )}
 
+        {/* Input row — Send button is min 44×44px for touch targets */}
         <div className="border-t border-slate-200 p-3 flex gap-2 items-end">
+          <label htmlFor="chat-input" className="sr-only">
+            Jouw antwoord
+          </label>
           <textarea
+            id="chat-input"
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Typ je antwoord... (Enter om te versturen)"
+            placeholder="Typ je antwoord… (Enter om te versturen, Shift+Enter voor nieuwe regel)"
             rows={2}
             disabled={isLoading || !started}
-            className="flex-1 resize-none text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:opacity-50 bg-slate-50"
+            aria-describedby={hint ? 'chat-hint' : undefined}
+            className="flex-1 resize-none text-sm border border-slate-200 rounded-xl px-3 py-2 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-transparent focus:outline-none disabled:opacity-50 bg-slate-50"
           />
+          {/* Min 44×44px touch target (Priority 2) */}
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={isLoading || !input.trim() || !started}
-            className="flex-shrink-0 w-9 h-9 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-colors"
+            aria-label="Verstuur bericht"
+            className="flex-shrink-0 w-11 h-11 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
-      </div>
+      </section>
 
       {started && messages.length <= 1 && (
         <div className="mt-4">
-          <TemplateSelector onSelect={handleTemplate} />
+          <TemplateSelector onSelect={(msg) => handleSend(msg)} />
         </div>
       )}
     </div>
