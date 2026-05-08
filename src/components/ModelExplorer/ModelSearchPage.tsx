@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Search, X, Loader2, TrendingUp, Database, ArrowRight } from 'lucide-react';
 import { AI_MODELS, type AIModelData } from '../../data/models';
 import ModelDetailPanel from './ModelDetailPanel';
@@ -46,6 +47,16 @@ function filterLocal(query: string): SearchModel[] {
     .map(toSearchModel);
 }
 
+// ── Animation variants ─────────────────────────────────────
+const gridContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
+};
+const gridItem = {
+  hidden: { opacity: 0, y: 14 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' as const } },
+};
+
 // ── Main Component ─────────────────────────────────────────
 export default function ModelSearchPage() {
   const [query, setQuery]               = useState('');
@@ -54,6 +65,7 @@ export default function ModelSearchPage() {
   const [hfLoading, setHfLoading]       = useState(false);
   const [selectedModel, setSelectedModel] = useState<{ id: string; name: string } | null>(null);
   const inputRef                         = useRef<HTMLInputElement>(null);
+  const reduced                          = useReducedMotion();
   const debounceRef                      = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-focus search on mount
@@ -180,11 +192,19 @@ export default function ModelSearchPage() {
               Onze database
             </h3>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+            key={query}
+            variants={reduced ? undefined : gridContainer}
+            initial={reduced ? false : 'hidden'}
+            animate="show"
+          >
             {localResults.slice(0, query.trim() ? 20 : 24).map((m) => (
-              <ModelCard key={m.id} model={m} onSelect={setSelectedModel} />
+              <motion.div key={m.id} variants={reduced ? undefined : gridItem}>
+                <ModelCard model={m} onSelect={setSelectedModel} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
           {!query.trim() && AI_MODELS.length > 24 && (
             <p className="text-xs text-center text-slate-400 mt-3">
               Typ een zoekopdracht om alle {AI_MODELS.length} modellen te doorzoeken.
@@ -200,11 +220,18 @@ export default function ModelSearchPage() {
             <TrendingUp className="w-3.5 h-3.5" />
             Meer op HuggingFace
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+            variants={reduced ? undefined : gridContainer}
+            initial={reduced ? false : 'hidden'}
+            animate="show"
+          >
             {hfResults.map((m) => (
-              <ModelCard key={m.id} model={m} onSelect={setSelectedModel} />
+              <motion.div key={m.id} variants={reduced ? undefined : gridItem}>
+                <ModelCard model={m} onSelect={setSelectedModel} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
       )}
 
@@ -227,16 +254,20 @@ interface ModelCardProps {
 }
 
 function ModelCard({ model, onSelect }: ModelCardProps) {
+  const reduced = useReducedMotion();
   const typeColor =
     model.type === 'open-source' ? 'bg-green-50 text-green-700 border-green-200' :
     model.type === 'cloud'       ? 'bg-blue-50 text-blue-700 border-blue-200' :
                                    'bg-purple-50 text-purple-700 border-purple-200';
 
   return (
-    <button
+    <motion.button
       type="button"
       onClick={() => onSelect({ id: model.id, name: model.name })}
-      className="w-full text-left bg-white border border-slate-200 rounded-xl p-4 hover:border-brand-300 hover:shadow-sm transition-all group"
+      whileHover={reduced ? {} : { y: -2, boxShadow: '0 6px 20px rgba(0,0,0,0.08)' }}
+      whileTap={reduced ? {} : { scale: 0.98 }}
+      transition={{ duration: 0.15 }}
+      className="w-full text-left bg-white border border-slate-200 rounded-xl p-4 hover:border-brand-300 transition-colors group"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -268,6 +299,6 @@ function ModelCard({ model, onSelect }: ModelCardProps) {
           </span>
         )}
       </div>
-    </button>
+    </motion.button>
   );
 }

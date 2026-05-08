@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { AppStep, ExtractedScenario, RecommendationResult } from './types';
 import Header from './components/Layout/Header';
 import IntroScreen from './components/IntroScreen';
@@ -65,34 +66,44 @@ export default function App() {
       <Header onExplorer={toggleExplorer} explorerActive={appStep === 'explorer'} />
 
       <main id="main-content" className="flex-1">
-        {appStep === 'explorer' && <ModelSearchPage />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={appStep}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {appStep === 'explorer' && <ModelSearchPage />}
 
-        {appStep === 'intro' && (
-          <IntroScreen onStart={() => goTo('conversation')} />
-        )}
+            {appStep === 'intro' && (
+              <IntroScreen onStart={() => goTo('conversation')} />
+            )}
 
-        {appStep === 'conversation' && (
-          <div>
-            {error && (
-              <div className="max-w-2xl mx-auto px-4 pt-4">
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
-                  {error}
-                </div>
+            {appStep === 'conversation' && (
+              <div>
+                {error && (
+                  <div className="max-w-2xl mx-auto px-4 pt-4">
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                      {error}
+                    </div>
+                  </div>
+                )}
+                <ConversationView onReady={handleScenarioReady} />
               </div>
             )}
-            <ConversationView onReady={handleScenarioReady} />
-          </div>
-        )}
 
-        {appStep === 'loading' && <LoadingScreen />}
+            {appStep === 'loading' && <LoadingScreen />}
 
-        {appStep === 'results' && result && scenario && (
-          <RecommendationsView
-            result={result}
-            scenario={scenario}
-            onRestart={handleRestart}
-          />
-        )}
+            {appStep === 'results' && result && scenario && (
+              <RecommendationsView
+                result={result}
+                scenario={scenario}
+                onRestart={handleRestart}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">

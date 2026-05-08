@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft, ExternalLink, Loader2, CheckCircle2, XCircle,
   AlertCircle, Download, Heart, Zap, Shield, Coins, BookOpen,
@@ -24,6 +25,7 @@ const GDPR_LABEL: Record<string, string> = {
 };
 
 export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) {
+  const reduced = useReducedMotion();
   const [info, setInfo]       = useState<ModelInfoResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
@@ -54,7 +56,12 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
   const hfUrl = `https://huggingface.co/${modelId}`;
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <motion.div
+      className="space-y-6"
+      initial={reduced ? false : { opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.28, ease: 'easeOut' }}
+    >
       {/* Back button */}
       <button
         type="button"
@@ -338,6 +345,6 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
