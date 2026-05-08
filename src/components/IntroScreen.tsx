@@ -75,16 +75,18 @@ export default function IntroScreen({ onStart }: Props) {
 
       {/* Models covered */}
       <div className="bg-white rounded-2xl border border-slate-200 p-8">
-        <h2 className="font-semibold text-slate-900 mb-4">17 modellen vergeleken</h2>
+        <h2 className="font-semibold text-slate-900 mb-1">106 modellen vergeleken</h2>
+        <p className="text-sm text-slate-400 mb-4">Van ultra-lichte edge-modellen tot state-of-the-art MoE — alle llmfit-modellen inbegrepen.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {[
-            'Claude 3.5 Sonnet', 'Claude 3 Haiku',
-            'GPT-4o', 'GPT-4o Mini',
-            'Gemini 1.5 Pro', 'Gemini 1.5 Flash',
-            'Llama 3.3 70B', 'Llama 3.1 70B', 'Llama 3.1 8B',
-            'DeepSeek R1', 'Qwen 2.5 72B', 'Qwen 2.5 Coder',
-            'Gemma 2 27B', 'Mistral Large', 'Mistral 7B',
-            'Groq', 'Phi-3.5 Mini',
+            'Claude 3.5 Sonnet', 'GPT-4o', 'Gemini 1.5 Pro',
+            'Llama 3.3 70B', 'Llama 4 Scout', 'Llama 4 Maverick',
+            'Mistral Large', 'Mixtral 8x22B', 'Mistral Small 3.1',
+            'DeepSeek R1 671B', 'DeepSeek V3', 'DeepSeek-R1 7B',
+            'Qwen3 235B MoE', 'Qwen3 Coder 480B', 'Qwen2.5 72B',
+            'Gemma 3 27B', 'Phi-4 14B', 'Granite 4.0',
+            'StarCoder2 15B', 'Falcon3 10B', 'BLOOM 176B',
+            'Command R 35B', 'Kimi K2 1T', '+ meer...',
           ].map((model) => (
             <div key={model} className="flex items-center gap-2 text-sm text-slate-600">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
