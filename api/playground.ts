@@ -41,7 +41,9 @@ export default async function handler(request: Request): Promise<Response> {
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
     }
-    return runProvider('https://api-inference.huggingface.co/v1/chat/completions', hfToken, body);
+    // Model-ID moet in het URL-pad staan: /models/{id}/v1/chat/completions
+    const hfUrl = `https://api-inference.huggingface.co/models/${modelId}/v1/chat/completions`;
+    return runProvider(hfUrl, hfToken, body);
   }
 
   // ── Groq ──────────────────────────────────────────────────
