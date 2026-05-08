@@ -1,4 +1,4 @@
-import { ArrowRight, Zap, Shield, TrendingUp, CheckCircle } from 'lucide-react';
+import { ArrowRight, MessageSquare, TrendingUp, Shield, Zap, FlaskConical, FileDown } from 'lucide-react';
 
 interface Props {
   onStart: () => void;
@@ -17,14 +17,14 @@ export default function IntroScreen({ onStart }: Props) {
           <span className="text-brand-600">bij jouw situatie?</span>
         </h1>
         <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-8">
-          Beantwoord 6 gerichte vragen over je use case, schaal, budget en privacyvereisten.
-          Llama 3.3 via Groq analyseert je situatie en geeft aanbevelingen met uitleg.
+          Voer een kort discovery-gesprek. Llama 3.3 via Groq analyseert je context en geeft
+          onderbouwde aanbevelingen met kostenraming, compliance-check en live playground.
         </p>
         <button
           onClick={onStart}
           className="inline-flex items-center gap-2 px-7 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-colors shadow-sm text-base"
         >
-          Start de adviseur
+          Start het gesprek
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>
@@ -32,9 +32,36 @@ export default function IntroScreen({ onStart }: Props) {
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
         {[
-          { icon: Zap, title: 'Snel advies', desc: 'In minder dan 2 minuten een onderbouwde aanbeveling op maat.' },
-          { icon: TrendingUp, title: 'Vergelijk modellen', desc: 'Kosten, prestaties en risico\'s naast elkaar voor jouw specifieke context.' },
-          { icon: Shield, title: 'Privacy & compliance', desc: 'Rekening houdend met GDPR, on-premise en EU-cloud vereisten.' },
+          {
+            icon: MessageSquare,
+            title: 'Conversational intake',
+            desc: 'AI stelt gerichte follow-up vragen over je use case, schaal, budget en privacy.',
+          },
+          {
+            icon: TrendingUp,
+            title: 'Kostenraming',
+            desc: 'Bereken maandelijkse kosten per model op basis van jouw tokenvolume.',
+          },
+          {
+            icon: Shield,
+            title: 'Compliance check',
+            desc: 'GDPR-status, dataresidentie en trainingsbeleid per model.',
+          },
+          {
+            icon: Zap,
+            title: 'Live playground',
+            desc: 'Test je prompt side-by-side op 3 Groq-modellen met latency en kosten.',
+          },
+          {
+            icon: FlaskConical,
+            title: 'Beslissingspad',
+            desc: 'Zie welke factoren de aanbeveling hebben bepaald.',
+          },
+          {
+            icon: FileDown,
+            title: 'PDF export',
+            desc: 'Exporteer het adviesrapport als PDF voor je team of opdrachtgever.',
+          },
         ].map(({ icon: Icon, title, desc }) => (
           <div key={title} className="bg-white rounded-2xl border border-slate-200 p-6">
             <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center mb-4">
@@ -48,15 +75,19 @@ export default function IntroScreen({ onStart }: Props) {
 
       {/* Models covered */}
       <div className="bg-white rounded-2xl border border-slate-200 p-8">
-        <h2 className="font-semibold text-slate-900 mb-4">Modellen die worden vergeleken</h2>
+        <h2 className="font-semibold text-slate-900 mb-4">17 modellen vergeleken</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {[
-            'Claude 3.5 Sonnet', 'Claude 3 Haiku', 'GPT-4o', 'GPT-4o Mini',
-            'Gemini 1.5 Pro', 'Gemini 1.5 Flash', 'Llama 3.1 70B', 'Llama 3.1 8B',
-            'Mistral Large', 'Mistral 7B', 'Groq', 'Phi-3',
+            'Claude 3.5 Sonnet', 'Claude 3 Haiku',
+            'GPT-4o', 'GPT-4o Mini',
+            'Gemini 1.5 Pro', 'Gemini 1.5 Flash',
+            'Llama 3.3 70B', 'Llama 3.1 70B', 'Llama 3.1 8B',
+            'DeepSeek R1', 'Qwen 2.5 72B', 'Qwen 2.5 Coder',
+            'Gemma 2 27B', 'Mistral Large', 'Mistral 7B',
+            'Groq', 'Phi-3.5 Mini',
           ].map((model) => (
             <div key={model} className="flex items-center gap-2 text-sm text-slate-600">
-              <CheckCircle className="w-4 h-4 text-brand-500 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
               {model}
             </div>
           ))}

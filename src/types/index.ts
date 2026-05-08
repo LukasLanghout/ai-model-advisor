@@ -1,52 +1,46 @@
-export type UseCase =
-  | 'text-language'
-  | 'code-development'
-  | 'data-analysis'
-  | 'image-vision'
-  | 'automation-agents'
-  | 'other';
-
-export type Scale =
-  | 'prototype'
-  | 'small'
-  | 'medium'
-  | 'large'
-  | 'enterprise';
-
-export type Latency =
-  | 'realtime'
-  | 'interactive'
-  | 'batch'
-  | 'async';
-
-export type Budget =
-  | 'hobby'
-  | 'small'
-  | 'medium'
-  | 'large'
-  | 'self-hosted';
-
-export type Privacy =
-  | 'open'
-  | 'business'
-  | 'sensitive'
-  | 'confidential';
-
-export type Integration =
-  | 'api'
-  | 'on-premise'
-  | 'edge'
-  | 'hybrid';
-
-export interface UserScenario {
-  useCase: UseCase | null;
-  scale: Scale | null;
-  latency: Latency | null;
-  budget: Budget | null;
-  privacy: Privacy | null;
-  integration: Integration | null;
+// ── Conversation ──────────────────────────────────────────
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
+export type TopicKey =
+  | 'useCase'
+  | 'scale'
+  | 'latency'
+  | 'budget'
+  | 'privacy'
+  | 'languages'
+  | 'contextWindow';
+
+export interface ChatResponse {
+  type: 'question' | 'ready';
+  question?: string;
+  hint?: string;
+  coveredTopics?: TopicKey[];
+  summary?: string;
+  scenario?: ExtractedScenario;
+}
+
+export interface ExtractedScenario {
+  useCase: string;
+  scale: string;
+  latency: string;
+  budget: string;
+  privacy: string;
+  languages: string[];
+  contextWindow: string;
+  description: string;
+}
+
+export interface UseCase {
+  id: string;
+  label: string;
+  description: string;
+  emoji: string;
+}
+
+// ── Recommendations ────────────────────────────────────────
 export interface ModelRecommendation {
   modelId: string;
   modelName: string;
@@ -59,13 +53,34 @@ export interface ModelRecommendation {
   estimatedMonthlyCost: string;
   documentationUrl: string;
   type: 'cloud' | 'open-source' | 'hybrid';
+  tradeOff?: string;
+}
+
+export interface DecisionFactor {
+  factor: string;
+  impact: string;
+  led_to: string;
 }
 
 export interface RecommendationResult {
   recommendations: ModelRecommendation[];
   summary: string;
   keyConsiderations: string[];
+  topThreeComparison?: string;
+  decisionFactors?: DecisionFactor[];
 }
 
-export type AppStep = 'intro' | 'questionnaire' | 'loading' | 'results';
-export type QuestionStep = 'useCase' | 'scale' | 'latency' | 'budget' | 'privacy' | 'integration';
+// ── Playground ─────────────────────────────────────────────
+export interface PlaygroundResult {
+  modelId: string;
+  modelName: string;
+  output: string;
+  latency: number;
+  inputTokens: number;
+  outputTokens: number;
+  estimatedCostEur: number;
+  error?: string;
+}
+
+// ── App state ──────────────────────────────────────────────
+export type AppStep = 'intro' | 'conversation' | 'loading' | 'results';

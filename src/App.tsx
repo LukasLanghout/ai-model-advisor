@@ -1,44 +1,27 @@
 import { useState } from 'react';
-import type { AppStep, UserScenario, RecommendationResult } from './types';
+import type { AppStep, ExtractedScenario, RecommendationResult } from './types';
 import Header from './components/Layout/Header';
 import IntroScreen from './components/IntroScreen';
-import QuestionnaireFlow from './components/Questionnaire/QuestionnaireFlow';
+import ConversationView from './components/Conversation/ConversationView';
 import LoadingScreen from './components/LoadingScreen';
 import RecommendationsView from './components/Results/RecommendationsView';
-import { saveScenario } from './lib/supabase';
-
-const emptyScenario: UserScenario = {
-  useCase: null,
-  scale: null,
-  latency: null,
-  budget: null,
-  privacy: null,
-  integration: null,
-};
-
-function generateSessionId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
 
 export default function App() {
   const [appStep, setAppStep] = useState<AppStep>('intro');
-  const [scenario, setScenario] = useState<UserScenario>(emptyScenario);
+  const [scenario, setScenario] = useState<ExtractedScenario | null>(null);
   const [result, setResult] = useState<RecommendationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [sessionId] = useState(generateSessionId);
 
-  async function handleSubmit(finalScenario: UserScenario) {
-    setScenario(finalScenario);
+  async function handleScenarioReady(extractedScenario: ExtractedScenario) {
+    setScenario(extractedScenario);
     setAppStep('loading');
     setError(null);
-
-    await saveScenario(sessionId, finalScenario);
 
     try {
       const res = await fetch('/api/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario: finalScenario }),
+        body: JSON.stringify({ scenario: extractedScenario }),
       });
 
       if (!res.ok) {
@@ -51,12 +34,12 @@ export default function App() {
       setAppStep('results');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden.');
-      setAppStep('questionnaire');
+      setAppStep('conversation');
     }
   }
 
   function handleRestart() {
-    setScenario(emptyScenario);
+    setScenario(null);
     setResult(null);
     setError(null);
     setAppStep('intro');
@@ -66,25 +49,31 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {appStep === 'intro' && <IntroScreen onStart={() => setAppStep('questionnaire')} />}
-        {appStep === 'questionnaire' && (
-          <QuestionnaireFlow
-            onSubmit={handleSubmit}
-            initialScenario={scenario}
-            apiError={error}
-          />
+        {appStep === 'intro' && (
+          <IntroScreen onStart={() => setAppStep('conversation')} />
+        )}
+        {appStep === 'conversation' && (
+          <div>
+            {error && (
+              <div className="max-w-2xl mx-auto px-4 pt-4">
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                  {error}
+                </div>
+              </div>
+            )}
+            <ConversationView onReady={handleScenarioReady} />
+          </div>
         )}
         {appStep === 'loading' && <LoadingScreen />}
-        {appStep === 'results' && result && (
+        {appStep === 'results' && result && scenario && (
           <RecommendationsView
             result={result}
             scenario={scenario}
-            sessionId={sessionId}
             onRestart={handleRestart}
           />
         )}
       </main>
-      <footer className="py-6 text-center text-sm text-slate-400 border-t border-slate-200">
+      <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">
         Gebouwd door{' '}
         <a
           href="https://github.com/LukasLanghout"

@@ -23,6 +23,17 @@ groq | Groq (Llama/Mixtral) | Groq | cloud | Extreem snel (300+ tokens/sec), lag
 phi-3 | Phi-3.5 Mini | Microsoft | open-source | Zeer kleine footprint (3.8B params), draait on-device, gratis | Gratis | fast | on-premise/edge | 128K tokens | ~4GB RAM of smartphone
 `.trim();
 
+interface ExtractedScenario {
+  useCase: string;
+  scale: string;
+  latency: string;
+  budget: string;
+  privacy: string;
+  languages: string[];
+  contextWindow: string;
+  description: string;
+}
+
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -39,7 +50,7 @@ export default async function handler(request: Request): Promise<Response> {
     );
   }
 
-  let body: { scenario: Record<string, string> };
+  let body: { scenario: ExtractedScenario };
   try {
     body = await request.json();
   } catch {
@@ -51,68 +62,29 @@ export default async function handler(request: Request): Promise<Response> {
 
   const { scenario } = body;
 
-  const labels: Record<string, Record<string, string>> = {
-    useCase: {
-      'text-language': 'Tekst & taalverwerking (chatbot, samenvatting, vertaling)',
-      'code-development': 'Code & development (code genereren, review, debugging)',
-      'data-analysis': 'Data-analyse & inzichten (analyse, rapporten)',
-      'image-vision': 'Beeld & vision (classificatie, OCR, visuele analyse)',
-      'automation-agents': 'Automatisering & agents (multi-step taken, workflows)',
-      other: 'Overig / combinatie',
-    },
-    scale: {
-      prototype: '< 100 requests/dag (prototype)',
-      small: '100–1.000 requests/dag (kleine app)',
-      medium: '1.000–10.000 requests/dag (middelgrote app)',
-      large: '10.000–100.000 requests/dag (grote app)',
-      enterprise: '> 100.000 requests/dag (enterprise)',
-    },
-    latency: {
-      realtime: 'Real-time (< 1 seconde)',
-      interactive: 'Interactief (1–5 seconden)',
-      batch: 'Batch (5–30 seconden)',
-      async: 'Asynchroon (minuten+)',
-    },
-    budget: {
-      hobby: '< €50/maand',
-      small: '€50–€500/maand',
-      medium: '€500–€5.000/maand',
-      large: '> €5.000/maand',
-      'self-hosted': 'Voorkeur self-hosted',
-    },
-    privacy: {
-      open: 'Geen beperkingen (cloud prima)',
-      business: 'Zakelijk gevoelig (cloud ok met DPA)',
-      sensitive: 'Sterk gevoelig (EU-cloud vereist)',
-      confidential: 'Strikt vertrouwelijk (alleen on-premise)',
-    },
-    integration: {
-      api: 'REST API (cloud)',
-      'on-premise': 'On-premise (eigen servers)',
-      edge: 'Edge / mobiel',
-      hybrid: 'Hybride',
-    },
-  };
-
-  const describe = (field: string) =>
-    labels[field]?.[scenario[field]] ?? scenario[field] ?? '?';
-
   const prompt = `Je bent een expert AI consultant. Analyseer het onderstaande gebruikersscenario en geef de beste AI model aanbevelingen.
 
-Gebruikersscenario:
-- Use case: ${describe('useCase')}
-- Schaal: ${describe('scale')}
-- Latency: ${describe('latency')}
-- Budget: ${describe('budget')}
-- Privacy: ${describe('privacy')}
-- Integratie: ${describe('integration')}
+Gebruikersscenario (verzameld via een discovery-gesprek):
+- Use case: ${scenario.useCase}
+- Schaal/volume: ${scenario.scale}
+- Latency vereiste: ${scenario.latency}
+- Budget: ${scenario.budget}
+- Privacy/compliance: ${scenario.privacy}
+- Talen: ${Array.isArray(scenario.languages) ? scenario.languages.join(', ') : scenario.languages}
+- Context behoefte: ${scenario.contextWindow}
+
+Volledige beschrijving: ${scenario.description}
 
 ${MODELS_CONTEXT}
 
 Geef een JSON object terug met exacte structuur:
 {
-  "summary": "Beknopte samenvatting (2-3 zinnen)",
+  "summary": "Beknopte samenvatting (2-3 zinnen) over waarom deze modellen zijn gekozen",
   "keyConsiderations": ["overweging 1", "overweging 2", "overweging 3"],
+  "topThreeComparison": "Vergelijking van de top 3 in 2-3 zinnen: wanneer kies je welk en waarom",
+  "decisionFactors": [
+    { "factor": "Privacy vereiste", "impact": "hoog", "led_to": "Alleen EU/on-premise modellen meegenomen" }
+  ],
   "recommendations": [
     {
       "modelId": "exacte id uit de lijst",
@@ -125,12 +97,14 @@ Geef een JSON object terug met exacte structuur:
       "cons": ["nadeel 1", "nadeel 2"],
       "estimatedMonthlyCost": "~€50–€200/maand",
       "documentationUrl": "https://...",
-      "type": "cloud"
+      "type": "cloud",
+      "tradeOff": "Beste keuze als X belangrijker is dan Y"
     }
   ]
 }
 
-Geef 3–5 aanbevelingen. Kies de meest relevante modellen voor dit specifieke scenario. Als privacy confidential is of integratie on-premise, geef uitsluitend open-source/zelf-hostbare modellen.`;
+Geef 3–5 aanbevelingen. Als privacy strikt is of on-premise vereist, geef uitsluitend open-source/zelf-hostbare modellen.
+Voeg voor elke aanbeveling een tradeOff toe die uitlegt wanneer dit model de betere keuze is ten opzichte van de andere aanbevelingen.`;
 
   try {
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
