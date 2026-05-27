@@ -82,7 +82,7 @@ export default function IntroScreen({ onStart }: Props) {
         transition={{ duration: 0.35, ease: 'easeOut' }}
       >
         <h2 className="font-medium text-slate-800 mb-1">106 modellen vergeleken</h2>
-        <p className="text-sm text-slate-400 mb-5">Van ultra-lichte edge-modellen tot state-of-the-art MoE.</p>
+        <p className="text-sm text-slate-400 mb-5">Van ultra-lichte edge-modellen tot state-of-the-art MoE (Mixture of Experts).</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4">
           {[
             'Claude 3.5 Sonnet', 'GPT-4o', 'Gemini 1.5 Pro',
