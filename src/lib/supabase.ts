@@ -26,6 +26,7 @@ export async function saveScenario(sessionId: string, scenario: ExtractedScenari
 
 export interface StudentFeedback {
   name?: string;
+  screen: string;
   feature: string;
   rating: number;
   comment?: string;
@@ -34,6 +35,7 @@ export interface StudentFeedback {
 export async function saveStudentFeedback(fb: StudentFeedback): Promise<{ error?: string }> {
   const { error } = await supabase.from('student_feedback').insert({
     name: fb.name?.trim() || null,
+    screen: fb.screen,
     feature: fb.feature,
     rating: fb.rating,
     comment: fb.comment?.trim() || null,

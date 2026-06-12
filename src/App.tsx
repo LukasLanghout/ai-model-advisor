@@ -107,7 +107,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <FeedbackWidget />
+      <FeedbackWidget screen={appStep} />
 
       <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">
         Gebouwd door{' '}
