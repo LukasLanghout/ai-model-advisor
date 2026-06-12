@@ -7,6 +7,7 @@ import ConversationView from './components/Conversation/ConversationView';
 import LoadingScreen from './components/LoadingScreen';
 import RecommendationsView from './components/Results/RecommendationsView';
 import ModelSearchPage from './components/ModelExplorer/ModelSearchPage';
+import FeedbackWidget from './components/FeedbackWidget';
 
 export default function App() {
   const [appStep, setAppStep]   = useState<AppStep>('intro');
@@ -105,6 +106,8 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <FeedbackWidget />
 
       <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">
         Gebouwd door{' '}
