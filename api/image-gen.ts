@@ -15,32 +15,19 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-// Try the HF Inference API; returns Response or throws
+// HF Inference Providers router: POST with { inputs } returns raw image bytes.
+// Abort at 50s so we can return a clean JSON error before Vercel's 60s hard kill.
 async function callHfInference(modelId: string, prompt: string, token?: string): Promise<Response> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
-
-  // Try new router endpoint first (HF API 2025+)
-  const routerUrl = `https://router.huggingface.co/hf-inference/models/${modelId}/v1/images/generate`;
-  try {
-    const res = await fetch(routerUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ prompt }),
-    });
-    if (res.status !== 404 && res.status !== 422) return res;
-  } catch {
-    // fall through to legacy endpoint
-  }
-
-  // Fall back to legacy inference endpoint
-  const legacyUrl = `https://api-inference.huggingface.co/models/${modelId}`;
-  return fetch(legacyUrl, {
+  const routerUrl = `https://router.huggingface.co/hf-inference/models/${modelId}`;
+  return fetch(routerUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify({ inputs: prompt }),
+    signal: AbortSignal.timeout(50_000),
   });
 }
 
@@ -74,9 +61,14 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     res = await callHfInference(modelId, prompt, hfToken);
   } catch (err) {
+    const isTimeout = err instanceof Error && err.name === 'TimeoutError';
     return new Response(
-      JSON.stringify({ error: `Netwerkfout bij verbinding met HuggingFace: ${String(err)}` }),
-      { status: 502, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        error: isTimeout
+          ? 'Generatie duurde langer dan 50s (model is waarschijnlijk aan het opstarten). Probeer het over een minuut opnieuw.'
+          : `Netwerkfout bij verbinding met HuggingFace: ${String(err)}`,
+      }),
+      { status: isTimeout ? 504 : 502, headers: { 'Content-Type': 'application/json' } }
     );
   }
 

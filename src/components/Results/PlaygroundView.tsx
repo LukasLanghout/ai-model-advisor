@@ -143,7 +143,19 @@ export default function PlaygroundView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: imagePrompt, modelId }),
       });
-      const data = (await res.json()) as ImageGenResult & { error?: string };
+      // Vercel timeouts (504) return plain text, not JSON — parse defensively
+      const raw = await res.text();
+      let data: ImageGenResult & { error?: string };
+      try {
+        data = JSON.parse(raw) as ImageGenResult & { error?: string };
+      } catch {
+        data = {
+          latency: 0,
+          error: res.status === 504
+            ? 'Time-out: het model deed er te lang over (cold start). Probeer het over een minuut opnieuw.'
+            : `HTTP ${res.status}: ${raw.slice(0, 120)}`,
+        };
+      }
       setImageResults((prev) => new Map(prev).set(modelId, { loading: false, ...data }));
     } catch (err) {
       setImageResults((prev) =>
