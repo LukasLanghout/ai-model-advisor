@@ -82,6 +82,12 @@ export interface PlaygroundResult {
   error?: string;
 }
 
+export interface ImageGenResult {
+  image?: string; // base64 data URL
+  latency: number;
+  error?: string;
+}
+
 // ── App state ──────────────────────────────────────────────
 export type AppStep = 'intro' | 'conversation' | 'loading' | 'results' | 'explorer';
 

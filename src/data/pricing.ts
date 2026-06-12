@@ -154,3 +154,53 @@ export const PLAYGROUND_MODELS = [
   { id: 'llama-3.1-8b-instant',    name: 'Llama 3.1 8B',     inputPer1M: 0.05, outputPer1M: 0.08 },
   { id: 'gemma2-9b-it',            name: 'Gemma 2 9B',       inputPer1M: 0.20, outputPer1M: 0.20 },
 ];
+
+export interface ImagePlaygroundModel {
+  id: string;
+  name: string;
+  description: string;
+  style: string;
+  speed: 'Snel' | 'Gemiddeld' | 'Langzaam';
+  free: boolean;
+  // Placeholder image shown before generation (consistent seed via picsum)
+  sampleImage: string;
+}
+
+export const IMAGE_PLAYGROUND_MODELS: ImagePlaygroundModel[] = [
+  {
+    id: 'black-forest-labs/FLUX.1-schnell',
+    name: 'FLUX.1 Schnell',
+    description: 'Snelste FLUX-model van Black Forest Labs. Photorealistisch, gratis via HF.',
+    style: 'Fotorealistisch',
+    speed: 'Snel',
+    free: true,
+    sampleImage: 'https://picsum.photos/seed/flux-schnell-ai/480/480',
+  },
+  {
+    id: 'black-forest-labs/FLUX.1-dev',
+    name: 'FLUX.1 Dev',
+    description: 'Research-versie van FLUX met hogere beeldkwaliteit en meer detail.',
+    style: 'Gedetailleerd',
+    speed: 'Gemiddeld',
+    free: false,
+    sampleImage: 'https://picsum.photos/seed/flux-dev-hq/480/480',
+  },
+  {
+    id: 'stabilityai/stable-diffusion-xl-base-1.0',
+    name: 'Stable Diffusion XL',
+    description: 'Stability AI\'s SDXL-model. Breed inzetbaar, artistiek en creatief.',
+    style: 'Artistiek',
+    speed: 'Gemiddeld',
+    free: true,
+    sampleImage: 'https://picsum.photos/seed/sdxl-art-2024/480/480',
+  },
+  {
+    id: 'stabilityai/stable-diffusion-3.5-medium',
+    name: 'SD 3.5 Medium',
+    description: 'Nieuwste Stability AI model. Balans tussen snelheid en kwaliteit.',
+    style: 'Modern',
+    speed: 'Gemiddeld',
+    free: false,
+    sampleImage: 'https://picsum.photos/seed/sd35-medium/480/480',
+  },
+];
