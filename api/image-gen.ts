@@ -1,113 +1,74 @@
-// Node.js runtime — supports up to 60s timeout (needed for image generation)
-export const maxDuration = 60;
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+// Node.js serverless function — maxDuration: 60 staat in vercel.json.
+// Edge runtime kan hier niet: die heeft een 25s-limiet en image-generatie duurt 15-45s.
 
 interface ImageGenBody {
-  prompt: string;
-  modelId: string;
+  prompt?: string;
+  modelId?: string;
 }
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-// HF Inference Providers router: POST with { inputs } returns raw image bytes.
-// Abort at 50s so we can return a clean JSON error before Vercel's 60s hard kill.
-async function callHfInference(modelId: string, prompt: string, token?: string): Promise<Response> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-  const routerUrl = `https://router.huggingface.co/hf-inference/models/${modelId}`;
-  return fetch(routerUrl, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ inputs: prompt }),
-    signal: AbortSignal.timeout(50_000),
-  });
-}
-
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  let body: ImageGenBody;
-  try {
-    body = (await req.json()) as ImageGenBody;
-  } catch {
-    return new Response(JSON.stringify({ error: 'Ongeldige JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const { prompt, modelId } = body;
+  const { prompt, modelId } = (req.body ?? {}) as ImageGenBody;
   if (!prompt?.trim() || !modelId?.trim()) {
-    return new Response(JSON.stringify({ error: 'prompt en modelId zijn verplicht' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(400).json({ error: 'prompt en modelId zijn verplicht' });
   }
 
   const hfToken = process.env.HUGGINGFACE_TOKEN;
   const start = Date.now();
 
-  let res: Response;
+  // HF Inference Providers router: POST met { inputs } geeft raw image bytes terug.
+  // Abort op 50s zodat we een nette JSON-fout kunnen sturen vóór Vercel's 60s hard kill.
+  let hfRes: Response;
   try {
-    res = await callHfInference(modelId, prompt, hfToken);
+    hfRes = await fetch(`https://router.huggingface.co/hf-inference/models/${modelId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(hfToken ? { Authorization: `Bearer ${hfToken}` } : {}),
+      },
+      body: JSON.stringify({ inputs: prompt }),
+      signal: AbortSignal.timeout(50_000),
+    });
   } catch (err) {
-    const isTimeout = err instanceof Error && err.name === 'TimeoutError';
-    return new Response(
-      JSON.stringify({
-        error: isTimeout
-          ? 'Generatie duurde langer dan 50s (model is waarschijnlijk aan het opstarten). Probeer het over een minuut opnieuw.'
-          : `Netwerkfout bij verbinding met HuggingFace: ${String(err)}`,
-      }),
-      { status: isTimeout ? 504 : 502, headers: { 'Content-Type': 'application/json' } }
-    );
+    const isTimeout = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError');
+    return res.status(isTimeout ? 504 : 502).json({
+      error: isTimeout
+        ? 'Generatie duurde langer dan 50s (model is waarschijnlijk aan het opstarten). Probeer het over een minuut opnieuw.'
+        : `Netwerkfout bij verbinding met HuggingFace: ${String(err)}`,
+    });
   }
 
   const latency = Date.now() - start;
 
-  if (!res.ok) {
-    let errMsg = `HTTP ${res.status}`;
+  if (!hfRes.ok) {
+    let errMsg = `HTTP ${hfRes.status}`;
     try {
-      const j = (await res.json()) as { error?: string; message?: string; estimated_time?: number };
+      const j = (await hfRes.json()) as { error?: string; message?: string; estimated_time?: number };
       if (j.estimated_time) {
         errMsg = `Model is aan het laden, probeer over ~${Math.ceil(j.estimated_time)}s opnieuw.`;
       } else {
         errMsg = j.error ?? j.message ?? errMsg;
       }
     } catch {
-      errMsg = (await res.text().catch(() => errMsg)) || errMsg;
+      errMsg = (await hfRes.text().catch(() => errMsg)) || errMsg;
     }
-    return new Response(JSON.stringify({ error: errMsg }), {
-      status: res.status,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(hfRes.status).json({ error: errMsg });
   }
 
-  const contentType = res.headers.get('content-type') ?? 'image/jpeg';
+  const contentType = hfRes.headers.get('content-type') ?? 'image/jpeg';
 
-  let buffer: ArrayBuffer;
+  let base64: string;
   try {
-    buffer = await res.arrayBuffer();
+    const buffer = await hfRes.arrayBuffer();
+    base64 = Buffer.from(buffer).toString('base64');
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: `Fout bij ophalen afbeelding: ${String(err)}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return res.status(500).json({ error: `Fout bij ophalen afbeelding: ${String(err)}` });
   }
 
-  const base64 = arrayBufferToBase64(buffer);
-
-  return new Response(
-    JSON.stringify({ image: `data:${contentType};base64,${base64}`, latency }),
-    { headers: { 'Content-Type': 'application/json' } }
-  );
+  return res.status(200).json({ image: `data:${contentType};base64,${base64}`, latency });
 }
