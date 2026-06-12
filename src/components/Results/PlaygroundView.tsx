@@ -427,10 +427,8 @@ export default function PlaygroundView() {
           </div>
 
           <p className="text-xs text-slate-400 leading-relaxed">
-            Vereist{' '}
-            <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-600">HUGGINGFACE_TOKEN</code>{' '}
-            in Vercel env vars voor hogere rate limits. Gated modellen (FLUX.1-dev, SD 3.5) vereisen
-            acceptatie van de modellicentie op HuggingFace.
+            Beide modellen draaien gratis via de HuggingFace Serverless Inference API.
+            Een eerste generatie kan langer duren als het model nog moet opstarten (cold start).
           </p>
         </div>
       )}

@@ -166,41 +166,25 @@ export interface ImagePlaygroundModel {
   sampleImage: string;
 }
 
+// Alleen modellen die de HF "hf-inference" serverless provider echt ondersteunt
+// (geverifieerd via https://huggingface.co/api/models?inference_provider=hf-inference)
 export const IMAGE_PLAYGROUND_MODELS: ImagePlaygroundModel[] = [
   {
     id: 'black-forest-labs/FLUX.1-schnell',
     name: 'FLUX.1 Schnell',
-    description: 'Snelste FLUX-model van Black Forest Labs. Photorealistisch, gratis via HF.',
+    description: 'Snelste FLUX-model van Black Forest Labs. Photorealistisch en gratis. Genereert in ~3-5 seconden.',
     style: 'Fotorealistisch',
     speed: 'Snel',
     free: true,
     sampleImage: 'https://picsum.photos/seed/flux-schnell-ai/480/480',
   },
   {
-    id: 'black-forest-labs/FLUX.1-dev',
-    name: 'FLUX.1 Dev',
-    description: 'Research-versie van FLUX met hogere beeldkwaliteit en meer detail.',
-    style: 'Gedetailleerd',
-    speed: 'Gemiddeld',
-    free: false,
-    sampleImage: 'https://picsum.photos/seed/flux-dev-hq/480/480',
-  },
-  {
-    id: 'stabilityai/stable-diffusion-xl-base-1.0',
-    name: 'Stable Diffusion XL',
-    description: 'Stability AI\'s SDXL-model. Breed inzetbaar, artistiek en creatief.',
-    style: 'Artistiek',
+    id: 'stabilityai/stable-diffusion-3-medium-diffusers',
+    name: 'Stable Diffusion 3 Medium',
+    description: 'Stability AI\'s SD3-model. Sterk in tekst-in-beeld en complexe composities. Genereert in ~15-20 seconden.',
+    style: 'Veelzijdig',
     speed: 'Gemiddeld',
     free: true,
-    sampleImage: 'https://picsum.photos/seed/sdxl-art-2024/480/480',
-  },
-  {
-    id: 'stabilityai/stable-diffusion-3.5-medium',
-    name: 'SD 3.5 Medium',
-    description: 'Nieuwste Stability AI model. Balans tussen snelheid en kwaliteit.',
-    style: 'Modern',
-    speed: 'Gemiddeld',
-    free: false,
-    sampleImage: 'https://picsum.photos/seed/sd35-medium/480/480',
+    sampleImage: 'https://picsum.photos/seed/sd3-medium-art/480/480',
   },
 ];
