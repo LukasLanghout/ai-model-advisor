@@ -20,7 +20,7 @@ export default function TopicProgress({ covered }: Props) {
   const coveredSet = new Set(covered);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4">
+    <div className="bg-white border border-slate-200 rounded-lg p-4">
       <p
         className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3"
         id="topic-progress-label"

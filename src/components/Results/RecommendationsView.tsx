@@ -39,7 +39,7 @@ export default function RecommendationsView({ result, onRestart }: Props) {
             type="button"
             onClick={() => window.print()}
             aria-label="Exporteer als PDF"
-            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             <Download className="w-4 h-4" aria-hidden="true" />
             PDF exporteren
@@ -48,7 +48,7 @@ export default function RecommendationsView({ result, onRestart }: Props) {
             type="button"
             onClick={onRestart}
             aria-label="Opnieuw beginnen"
-            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             <RotateCcw className="w-4 h-4" aria-hidden="true" />
             Opnieuw
@@ -57,7 +57,7 @@ export default function RecommendationsView({ result, onRestart }: Props) {
       </div>
 
       {/* Summary */}
-      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-2xl p-6 sm:p-8 mb-6 text-white">
+      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-lg p-6 sm:p-8 mb-6 text-white">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-2">
           Samenvatting
         </p>
@@ -66,7 +66,7 @@ export default function RecommendationsView({ result, onRestart }: Props) {
 
       {/* Key considerations */}
       {result.keyConsiderations?.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Lightbulb className="w-4 h-4 text-amber-600" aria-hidden="true" />
             <span className="text-sm font-semibold text-amber-800">Belangrijke overwegingen</span>
@@ -125,7 +125,7 @@ export default function RecommendationsView({ result, onRestart }: Props) {
                 {tab.id === 'aanbevelingen' && (
                   <div className="space-y-4">
                     {result.topThreeComparison && (
-                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
+                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-600">
                         <span className="font-semibold text-slate-700">Top 3 vergelijking: </span>
                         {result.topThreeComparison}
                       </div>

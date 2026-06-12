@@ -11,7 +11,7 @@ export default function LoadingScreen() {
     >
       <div className="relative mb-6">
         <div
-          className="w-16 h-16 rounded-2xl bg-brand-600 flex items-center justify-center"
+          className="w-16 h-16 rounded-lg bg-brand-600 flex items-center justify-center"
           aria-hidden="true"
         >
           <Brain className="w-8 h-8 text-white" />

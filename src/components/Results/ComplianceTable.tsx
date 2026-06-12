@@ -57,7 +57,7 @@ export default function ComplianceTable({ recommendations }: Props) {
           const dutch = DUTCH_BADGE[c.dutchQuality];
 
           return (
-            <div key={rec.modelId} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div key={rec.modelId} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <h4 className="font-semibold text-slate-900">{rec.modelName}</h4>

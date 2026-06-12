@@ -85,7 +85,7 @@ export default function App() {
               <div>
                 {error && (
                   <div className="max-w-2xl mx-auto px-4 pt-4">
-                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
                       {error}
                     </div>
                   </div>

@@ -189,7 +189,7 @@ export default function PlaygroundView() {
       </div>
 
       {/* Tab toggle */}
-      <div className="flex gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+      <div className="flex gap-1 p-1 bg-slate-100 rounded-lg w-fit">
         <button
           type="button"
           onClick={() => setActiveTab('tekst')}
@@ -231,12 +231,12 @@ export default function PlaygroundView() {
               onChange={(e) => setTextPrompt(e.target.value)}
               rows={4}
               placeholder="Schrijf hier je test prompt… Bijv. 'Vat de voor- en nadelen van microservices samen in 5 punten.'"
-              className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-slate-50"
+              className="w-full text-sm border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-slate-50"
             />
           </div>
 
           {/* Groq section */}
-          <div className="rounded-2xl border border-slate-200 overflow-hidden">
+          <div className="rounded-lg border border-slate-200 overflow-hidden">
             <div className="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <Cpu className="w-4 h-4 text-brand-600 flex-shrink-0" />
@@ -254,7 +254,7 @@ export default function PlaygroundView() {
                   onClick={runGroqPlayground}
                   disabled={!textPrompt.trim() || isRunning}
                   aria-label="Run alle Groq modellen"
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   {isRunning
                     ? <><Loader2 className="w-4 h-4 animate-spin" />Bezig…</>
@@ -285,7 +285,7 @@ export default function PlaygroundView() {
           </div>
 
           {/* HuggingFace text section */}
-          <div className="rounded-2xl border border-brand-200 overflow-hidden">
+          <div className="rounded-lg border border-brand-200 overflow-hidden">
             <div className="px-5 py-4 bg-brand-50 border-b border-brand-100 flex items-center gap-2 flex-wrap">
               <TrendingUp className="w-4 h-4 text-brand-600 flex-shrink-0" />
               <span className="font-medium text-slate-800 text-sm">HuggingFace Explorer</span>
@@ -338,7 +338,7 @@ export default function PlaygroundView() {
                     onKeyDown={(e) => e.key === 'Enter' && runHfPlayground()}
                     placeholder="bijv. meta-llama/Llama-3.3-70B-Instruct"
                     aria-label="HuggingFace model ID"
-                    className="w-full text-sm border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
+                    className="w-full text-sm border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                   />
                 </div>
                 <button
@@ -346,7 +346,7 @@ export default function PlaygroundView() {
                   onClick={runHfPlayground}
                   disabled={!textPrompt.trim() || !hfModelInput.trim() || isRunningHf}
                   aria-label="Run geselecteerd HuggingFace model"
-                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
                 >
                   {isRunningHf
                     ? <><Loader2 className="w-4 h-4 animate-spin" />Bezig…</>
@@ -390,14 +390,14 @@ export default function PlaygroundView() {
                 onChange={(e) => setImagePrompt(e.target.value)}
                 rows={2}
                 placeholder="Bijv. 'A serene mountain lake at golden hour, photorealistic, 4K'"
-                className="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-slate-50"
+                className="flex-1 text-sm border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-slate-50"
               />
               <button
                 type="button"
                 onClick={generateAllImages}
                 disabled={!imagePrompt.trim() || anyImageLoading}
                 aria-label="Genereer met alle modellen"
-                className="flex flex-col items-center justify-center gap-1 px-5 py-3 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors whitespace-nowrap"
+                className="flex flex-col items-center justify-center gap-1 px-5 py-3 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
               >
                 {anyImageLoading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-xs">Bezig…</span></>
@@ -448,7 +448,7 @@ function ImageModelCard({ model, state, prompt, onGenerate }: ImageModelCardProp
   const hasResult = state && !state.loading && (state.image ?? state.error);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col">
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden flex flex-col">
       {/* Image area */}
       <div className="relative aspect-square bg-slate-100 overflow-hidden">
         {/* Sample / generated image */}
@@ -540,7 +540,7 @@ function ImageModelCard({ model, state, prompt, onGenerate }: ImageModelCardProp
           type="button"
           onClick={onGenerate}
           disabled={!prompt.trim() || state?.loading}
-          className="mt-auto flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-slate-200 hover:border-brand-400 hover:bg-brand-50 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 hover:text-brand-700 text-sm font-medium rounded-xl transition-colors"
+          className="mt-auto flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-slate-200 hover:border-brand-400 hover:bg-brand-50 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 hover:text-brand-700 text-sm font-medium rounded-lg transition-colors"
         >
           {state?.loading
             ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Bezig…</>
@@ -564,7 +564,7 @@ interface ResultCardProps {
 function ResultCard({ result, highlight, badge }: ResultCardProps) {
   return (
     <div
-      className={`bg-white border rounded-xl overflow-hidden flex flex-col ${
+      className={`bg-white border rounded-lg overflow-hidden flex flex-col ${
         highlight ? 'border-green-400 ring-1 ring-green-200' : 'border-slate-200'
       }`}
     >
@@ -608,7 +608,7 @@ function ResultCard({ result, highlight, badge }: ResultCardProps) {
 
 function SkeletonCard({ name }: { name: string }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse">
+    <div className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
       <div className="h-3 bg-slate-200 rounded w-1/2 mb-3" />
       <div className="space-y-2">
         <div className="h-2 bg-slate-100 rounded" />

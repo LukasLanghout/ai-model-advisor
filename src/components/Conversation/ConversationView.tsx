@@ -117,7 +117,7 @@ export default function ConversationView({ onReady }: Props) {
       {/* Chat panel — flex column, min-height responsive instead of fixed px */}
       <section
         aria-label="Gesprek"
-        className="mt-4 bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col"
+        className="mt-4 bg-white border border-slate-200 rounded-lg overflow-hidden flex flex-col"
         style={{ minHeight: '380px', maxHeight: '520px' }}
       >
         {/* Messages — aria-live so screen readers announce new bubbles */}
@@ -148,7 +148,7 @@ export default function ConversationView({ onReady }: Props) {
                 AI
               </div>
               <div
-                className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm"
+                className="bg-white border border-slate-200 rounded-lg rounded-bl-sm px-4 py-3 shadow-sm"
                 aria-hidden="true"
               >
                 <div className="flex gap-1">
@@ -183,7 +183,7 @@ export default function ConversationView({ onReady }: Props) {
             rows={2}
             disabled={isLoading || !started}
             aria-describedby={hint ? 'chat-hint' : undefined}
-            className="flex-1 resize-none text-sm border border-slate-200 rounded-xl px-3 py-2 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-transparent focus:outline-none disabled:opacity-50 bg-slate-50"
+            className="flex-1 resize-none text-sm border border-slate-200 rounded-lg px-3 py-2 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-transparent focus:outline-none disabled:opacity-50 bg-slate-50"
           />
           {/* Min 44×44px touch target (Priority 2) */}
           <button
@@ -191,7 +191,7 @@ export default function ConversationView({ onReady }: Props) {
             onClick={() => handleSend()}
             disabled={isLoading || !input.trim() || !started}
             aria-label="Verstuur bericht"
-            className="flex-shrink-0 w-11 h-11 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="flex-shrink-0 w-11 h-11 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             <Send className="w-4 h-4" aria-hidden="true" />
           </button>

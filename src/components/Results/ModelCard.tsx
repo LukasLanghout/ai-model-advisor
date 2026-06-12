@@ -24,7 +24,7 @@ export default function ModelCard({ rec, isTop }: Props) {
   return (
     <article
       aria-label={`${rec.modelName} — score ${rec.score} van 10${isTop ? ' (top keuze)' : ''}`}
-      className={`bg-white rounded-2xl border p-6 transition-shadow hover:shadow-md ${
+      className={`bg-white rounded-lg border p-6 transition-shadow hover:shadow-md ${
         isTop ? 'border-brand-400 shadow-sm ring-1 ring-brand-200' : 'border-slate-200'
       }`}
     >

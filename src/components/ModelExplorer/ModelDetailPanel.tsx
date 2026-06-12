@@ -73,7 +73,7 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
       </button>
 
       {/* Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white rounded-lg border border-slate-200 p-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h2 className="text-xl font-bold text-slate-900">{modelName}</h2>
@@ -153,7 +153,7 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
       </div>
 
       {/* Groq Analysis */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white rounded-lg border border-slate-200 p-6">
         <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
           <Zap className="w-4 h-4 text-brand-600" />
           Analyse door Groq
@@ -253,7 +253,7 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
       {/* Pricing + Compliance side by side */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {/* Pricing */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <div className="bg-white rounded-lg border border-slate-200 p-5">
           <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2 text-sm">
             <Coins className="w-4 h-4 text-brand-600" />
             Kosten
@@ -290,7 +290,7 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
         </div>
 
         {/* Compliance */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <div className="bg-white rounded-lg border border-slate-200 p-5">
           <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2 text-sm">
             <Shield className="w-4 h-4 text-brand-600" />
             Privacy &amp; Compliance
@@ -334,7 +334,7 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
 
       {/* HF tags */}
       {info?.hfData?.tags && info.hfData.tags.length > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <div className="bg-white rounded-lg border border-slate-200 p-5">
           <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">HuggingFace tags</p>
           <div className="flex flex-wrap gap-2">
             {info.hfData.tags.map((tag) => (

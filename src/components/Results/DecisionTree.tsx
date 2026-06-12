@@ -26,7 +26,7 @@ export default function DecisionTree({ decisionFactors, topRecommendation, summa
       </div>
 
       {/* Summary banner */}
-      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-xl p-5 text-white">
+      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-lg p-5 text-white">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-1">Conclusie</p>
         <p className="text-sm leading-relaxed">{summary}</p>
       </div>
@@ -40,7 +40,7 @@ export default function DecisionTree({ decisionFactors, topRecommendation, summa
               <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 mt-0.5">
                 {idx + 1}
               </div>
-              <div className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3">
+              <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <span className="text-sm font-semibold text-slate-800">{f.factor}</span>
                   <span className={`text-xs px-2 py-0.5 rounded border font-medium ${IMPACT_STYLE[f.impact] ?? 'bg-slate-50 border-slate-200 text-slate-600'}`}>
@@ -58,7 +58,7 @@ export default function DecisionTree({ decisionFactors, topRecommendation, summa
       )}
 
       {/* Top recommendation callout */}
-      <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+      <div className="bg-green-50 border border-green-200 rounded-lg p-5">
         <p className="text-xs font-semibold text-green-600 uppercase tracking-wider mb-2">Top aanbeveling</p>
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>

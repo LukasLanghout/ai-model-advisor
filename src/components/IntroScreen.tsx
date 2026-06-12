@@ -19,27 +19,26 @@ export default function IntroScreen({ onStart }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-      {/* Hero */}
+      {/* Hero — links uitgelijnd, redactioneel in plaats van template-gecentreerd */}
       <motion.div
-        className="text-center mb-16"
+        className="max-w-2xl mb-16 border-l-2 border-brand-600 pl-6 sm:pl-8"
         initial={reduced ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        <span className="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-medium mb-4 tracking-wide">
-          Persoonlijk project · Lukas Langhout
-        </span>
-        <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-5 leading-tight">
-          Welk AI-model past<br />
-          <span className="text-brand-600">bij jouw situatie?</span>
+        <p className="text-xs text-slate-400 uppercase tracking-widest mb-3">
+          Persoonlijk project — Lukas Langhout
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+          Welk AI-model past bij jouw situatie?
         </h1>
-        <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
+        <p className="text-base text-slate-500 mb-7 leading-relaxed">
           Voer een kort discovery-gesprek. Llama 3.3 via Groq analyseert je context en geeft
           onderbouwde aanbevelingen met kostenraming, compliance-check en live playground.
         </p>
         <button
           onClick={onStart}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors text-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-brand-700 text-white font-medium rounded-md transition-colors text-sm"
         >
           Start het gesprek
           <ArrowRight className="w-4 h-4" />
@@ -64,7 +63,7 @@ export default function IntroScreen({ onStart }: Props) {
           <motion.div
             key={title}
             variants={cardItem}
-            className="bg-white rounded-xl border border-slate-200 p-5"
+            className="bg-white rounded-lg border border-slate-200 p-5"
           >
             <Icon className="w-4 h-4 text-slate-400 mb-3" />
             <h3 className="font-medium text-slate-800 mb-1 text-sm">{title}</h3>
@@ -75,7 +74,7 @@ export default function IntroScreen({ onStart }: Props) {
 
       {/* Models covered — scroll-triggered */}
       <motion.div
-        className="bg-white rounded-xl border border-slate-200 p-8"
+        className="bg-white rounded-lg border border-slate-200 p-8"
         initial={reduced ? false : { opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}

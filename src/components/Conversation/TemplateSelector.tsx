@@ -47,7 +47,7 @@ export default function TemplateSelector({ onSelect }: Props) {
             key={id}
             type="button"
             onClick={() => onSelect(message)}
-            className="text-left bg-white border border-slate-200 hover:border-brand-300 hover:bg-brand-50 rounded-xl p-3 transition-all group"
+            className="text-left bg-white border border-slate-200 hover:border-brand-300 hover:bg-brand-50 rounded-lg p-3 transition-all group"
           >
             <div className="flex items-center gap-2 mb-1">
               <div className="w-6 h-6 rounded-lg bg-brand-50 group-hover:bg-brand-100 flex items-center justify-center flex-shrink-0 transition-colors">

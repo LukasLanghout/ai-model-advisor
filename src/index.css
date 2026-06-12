@@ -120,7 +120,7 @@
     print-color-adjust: exact;
   }
 
-  .rounded-2xl {
+  .rounded-lg {
     page-break-inside: avoid;
   }
 }

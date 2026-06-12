@@ -138,7 +138,7 @@ export default function FeedbackWidget({ screen }: Props) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`Feedback geven over ${config.label}`}
-        className={`no-print fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 bg-slate-900 hover:bg-slate-700 text-white text-sm font-medium rounded-full shadow-lg transition-colors ${
+        className={`no-print fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 bg-slate-900 hover:bg-slate-700 text-white text-sm font-medium rounded-md shadow-md transition-colors ${
           open ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -154,7 +154,7 @@ export default function FeedbackWidget({ screen }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="no-print fixed bottom-5 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-sm bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden"
+            className="no-print fixed bottom-5 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-sm bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden"
             role="dialog"
             aria-label={`Feedback over ${config.label}`}
           >
@@ -197,7 +197,7 @@ export default function FeedbackWidget({ screen }: Props) {
                     id="fb-feature"
                     value={draft.feature}
                     onChange={(e) => updateDraft({ feature: e.target.value })}
-                    className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   >
                     {config.features.map((f) => (
                       <option key={f} value={f}>{f}</option>
@@ -245,7 +245,7 @@ export default function FeedbackWidget({ screen }: Props) {
                     rows={3}
                     maxLength={1000}
                     placeholder="Wat werkt goed? Wat kan beter?"
-                    className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+                    className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
                   />
                 </div>
 
@@ -261,7 +261,7 @@ export default function FeedbackWidget({ screen }: Props) {
                     onChange={(e) => setName(e.target.value)}
                     maxLength={100}
                     placeholder="Anoniem mag ook"
-                    className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   />
                 </div>
 
@@ -275,7 +275,7 @@ export default function FeedbackWidget({ screen }: Props) {
                   type="button"
                   onClick={submit}
                   disabled={draft.rating === 0 || status === 'sending'}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   {status === 'sending'
                     ? <><Loader2 className="w-4 h-4 animate-spin" />Versturen…</>
