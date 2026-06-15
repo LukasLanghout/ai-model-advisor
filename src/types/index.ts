@@ -88,6 +88,17 @@ export interface ImageGenResult {
   error?: string;
 }
 
+// ── Getting Started ────────────────────────────────────────
+export interface GettingStartedResult {
+  starterPrompt: string;
+  quickStartCode: string;
+  firstTestPrompt: string;
+  apiKeySteps: string[];
+  apiKeyUrl: string;
+  localSetupSteps?: string[];
+  ollamaModelName?: string;
+}
+
 // ── App state ──────────────────────────────────────────────
 export type AppStep = 'intro' | 'conversation' | 'loading' | 'results' | 'explorer';
 

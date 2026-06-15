@@ -6,6 +6,7 @@ import CostCalculator from './CostCalculator';
 import PlaygroundView from './PlaygroundView';
 import ComplianceTable from './ComplianceTable';
 import DecisionTree from './DecisionTree';
+import GettingStartedView from './GettingStartedView';
 
 interface Props {
   result: RecommendationResult;
@@ -15,6 +16,7 @@ interface Props {
 
 const TABS = [
   { id: 'aanbevelingen', label: 'Aanbevelingen' },
+  { id: 'aan-de-slag',   label: '🚀 Aan de slag' },
   { id: 'beslissing',    label: 'Beslissingspad' },
   { id: 'kosten',        label: 'Kosten' },
   { id: 'playground',   label: 'Playground' },
@@ -23,7 +25,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]['id'];
 
-export default function RecommendationsView({ result, onRestart }: Props) {
+export default function RecommendationsView({ result, scenario, onRestart }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('aanbevelingen');
 
   return (
@@ -110,8 +112,24 @@ export default function RecommendationsView({ result, onRestart }: Props) {
         </div>
       </div>
 
+      {/* Print-only: alle aanbevelingen volledig uitgeschreven */}
+      <div className="hidden print:block space-y-6 mb-8">
+        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">Aanbevelingen</h3>
+        {result.recommendations.map((rec, i) => (
+          <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
+        ))}
+        <div className="mt-6 border-t border-slate-200 pt-6">
+          <h3 className="text-lg font-bold text-slate-900 mb-4">Aan de slag met {result.recommendations[0]?.modelName}</h3>
+          <GettingStartedView
+            topRec={result.recommendations[0]}
+            useCase={scenario.useCase}
+            scenario={scenario.description}
+          />
+        </div>
+      </div>
+
       {/* Tab panels */}
-      <div className="min-h-[400px]">
+      <div className="no-print min-h-[400px]">
         {TABS.map((tab) => (
           <div
             key={tab.id}
@@ -134,6 +152,13 @@ export default function RecommendationsView({ result, onRestart }: Props) {
                       <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
                     ))}
                   </div>
+                )}
+                {tab.id === 'aan-de-slag' && (
+                  <GettingStartedView
+                    topRec={result.recommendations[0]}
+                    useCase={scenario.useCase}
+                    scenario={scenario.description}
+                  />
                 )}
                 {tab.id === 'beslissing' && (
                   <DecisionTree
