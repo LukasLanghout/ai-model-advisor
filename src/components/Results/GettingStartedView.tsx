@@ -3,12 +3,13 @@ import { Loader2, Copy, Check, ExternalLink, Key, Terminal, Code2, MessageSquare
 import type { ModelRecommendation, GettingStartedResult } from '../../types';
 
 interface Props {
-  topRec: ModelRecommendation;
+  rec: ModelRecommendation;
   useCase: string;
   scenario: string;
+  onDataLoaded?: (data: GettingStartedResult) => void;
 }
 
-export default function GettingStartedView({ topRec, useCase, scenario }: Props) {
+export default function GettingStartedView({ rec, useCase, scenario, onDataLoaded }: Props) {
   const [data, setData]       = useState<GettingStartedResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
@@ -17,14 +18,15 @@ export default function GettingStartedView({ topRec, useCase, scenario }: Props)
   useEffect(() => {
     setLoading(true);
     setError('');
+    setData(null);
     fetch('/api/getting-started', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        modelId: topRec.modelId,
-        modelName: topRec.modelName,
-        provider: topRec.provider,
-        type: topRec.type,
+        modelId: rec.modelId,
+        modelName: rec.modelName,
+        provider: rec.provider,
+        type: rec.type,
         useCase,
         scenario,
       }),
@@ -33,10 +35,11 @@ export default function GettingStartedView({ topRec, useCase, scenario }: Props)
         const json = await r.json() as GettingStartedResult & { error?: string };
         if (!r.ok || json.error) throw new Error(json.error ?? `HTTP ${r.status}`);
         setData(json);
+        onDataLoaded?.(json);
       })
       .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false));
-  }, [topRec.modelId]);
+  }, [rec.modelId]);
 
   function copyText(text: string, key: 'prompt' | 'code' | 'test') {
     navigator.clipboard.writeText(text).then(() => {
@@ -50,7 +53,7 @@ export default function GettingStartedView({ topRec, useCase, scenario }: Props)
       <div className="space-y-4 py-6">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 className="w-4 h-4 animate-spin text-brand-600" />
-          Stappenplan wordt gegenereerd voor {topRec.modelName}…
+          Stappenplan wordt gegenereerd voor {rec.modelName}…
         </div>
         {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse space-y-2">
@@ -81,7 +84,7 @@ export default function GettingStartedView({ topRec, useCase, scenario }: Props)
       <section className="bg-white border border-slate-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
           <Key className="w-4 h-4 text-brand-600" />
-          <h3 className="font-semibold text-slate-800 text-sm">Stap 1 — API-toegang aanvragen bij {topRec.provider}</h3>
+          <h3 className="font-semibold text-slate-800 text-sm">Stap 1 — API-toegang aanvragen bij {rec.provider}</h3>
         </div>
         <div className="px-5 py-4">
           <ol className="space-y-3">
