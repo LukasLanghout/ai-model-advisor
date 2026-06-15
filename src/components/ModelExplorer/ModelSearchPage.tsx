@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Search, X, Loader2, TrendingUp, Database, ArrowRight, Plus, Check, Columns3 } from 'lucide-react';
+import { Search, X, Loader2, TrendingUp, Database, ArrowRight, Plus, Check, Columns3, ImageIcon } from 'lucide-react';
 import { AI_MODELS, type AIModelData } from '../../data/models';
 import ModelDetailPanel from './ModelDetailPanel';
 import ModelComparePanel from './ModelComparePanel';
@@ -25,6 +25,7 @@ interface SearchModel {
   downloads?: number;
   likes?: number;
   tags?: string[];
+  imageGeneration?: boolean;
 }
 
 // ── Helpers ────────────────────────────────────────────────
@@ -32,7 +33,7 @@ function toSearchModel(m: AIModelData): SearchModel {
   return {
     id: m.id, name: m.name, provider: m.provider,
     type: m.type, params: m.params, contextK: m.contextK,
-    source: 'local',
+    source: 'local', imageGeneration: m.imageGeneration,
   };
 }
 
@@ -365,6 +366,12 @@ function ModelCard({ model, onSelect, compareSelected, compareFull, onToggleComp
             </span>
           )}
         </div>
+        {model.imageGeneration && (
+          <span className="inline-flex items-center gap-1 mt-2 text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 font-medium">
+            <ImageIcon className="w-3 h-3" />
+            Beeldgeneratie
+          </span>
+        )}
       </button>
 
       {/* Vergelijk-toggle — alleen voor modellen uit onze database */}

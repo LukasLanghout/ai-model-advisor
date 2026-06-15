@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, AlertCircle, ImageIcon } from 'lucide-react';
 import { getModelById } from '../../data/models';
 import { PRICING } from '../../data/pricing';
 import { COMPLIANCE_DATA } from '../../data/compliance';
@@ -110,6 +110,15 @@ export default function ModelComparePanel({ modelIds, onBack }: Props) {
     { label: 'Traint op prompts',  render: (id) => { const t = COMPLIANCE_DATA[id]?.trainingOnPrompts; return t ? TRAINING_LABEL[t] : '—'; } },
     { label: 'Nederlands',         render: (id) => { const d = COMPLIANCE_DATA[id]?.dutchQuality; return d ? DUTCH_LABEL[d] : '—'; } },
     { label: 'Open source',        render: (id) => { const c = COMPLIANCE_DATA[id]; return c ? (c.openSource ? 'Ja' : 'Nee') : '—'; } },
+    {
+      label: 'Beeldgeneratie',
+      render: (id) => {
+        const m = getModelById(id);
+        return m?.imageGeneration
+          ? <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 font-medium"><ImageIcon className="w-3 h-3" />Ja</span>
+          : <span className="text-slate-400 text-xs">Nee</span>;
+      },
+    },
   ];
 
   return (

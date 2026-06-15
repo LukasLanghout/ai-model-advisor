@@ -8,6 +8,7 @@ export interface AIModelData {
   params?: string;       // e.g. "7B", "32B (MoE)"
   contextK?: number;     // context window in thousands of tokens
   specialties?: string[];
+  imageGeneration?: boolean; // true = kan afbeeldingen genereren
 }
 
 // ── Cloud-only models ──────────────────────────────────────────────────────────
@@ -174,6 +175,15 @@ const OTHER_OS_MODELS: AIModelData[] = [
   { id: 'glm-4-9b',      name: 'GLM-4 9B Chat',   provider: 'Zhipu AI', type: 'open-source', documentationUrl: 'https://huggingface.co/THUDM', color: '#ef4444', params: '9B', contextK: 128, specialties: ['meertalig', 'Chinees', 'instruct'] },
 ];
 
+// ── Beeldgeneratie-modellen ────────────────────────────────────────────────────
+const IMAGE_GEN_MODELS: AIModelData[] = [
+  { id: 'dall-e-3',                                    name: 'DALL·E 3',              provider: 'OpenAI',              type: 'cloud',       documentationUrl: 'https://platform.openai.com/docs/guides/images', color: '#16a34a', specialties: ['fotorealistisch', 'prompt-following', 'bewerkbaar'],          imageGeneration: true },
+  { id: 'imagen-3',                                    name: 'Imagen 3',              provider: 'Google',              type: 'cloud',       documentationUrl: 'https://deepmind.google/technologies/imagen-3/',    color: '#2563eb', specialties: ['fotorealistisch', 'hoge kwaliteit', 'Vertex AI'],             imageGeneration: true },
+  { id: 'black-forest-labs/FLUX.1-schnell',            name: 'FLUX.1 Schnell',        provider: 'Black Forest Labs',   type: 'open-source', documentationUrl: 'https://huggingface.co/black-forest-labs/FLUX.1-schnell', color: '#7c3aed', specialties: ['snel', 'gratis', 'HuggingFace'],                       imageGeneration: true },
+  { id: 'stabilityai/stable-diffusion-3-medium-diffusers', name: 'Stable Diffusion 3 Medium', provider: 'Stability AI', type: 'open-source', documentationUrl: 'https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers', color: '#6366f1', specialties: ['open source', 'zelf hosten', 'HuggingFace'], imageGeneration: true },
+  { id: 'midjourney-v6',                               name: 'Midjourney v6',         provider: 'Midjourney',          type: 'cloud',       documentationUrl: 'https://docs.midjourney.com',                       color: '#0891b2', specialties: ['artistiek', 'hoge kwaliteit', 'stijlvol'],                   imageGeneration: true },
+];
+
 export const AI_MODELS: AIModelData[] = [
   ...CLOUD_MODELS,
   ...MISTRAL_MODELS,
@@ -184,6 +194,7 @@ export const AI_MODELS: AIModelData[] = [
   ...QWEN_MODELS,
   ...DEEPSEEK_MODELS,
   ...OTHER_OS_MODELS,
+  ...IMAGE_GEN_MODELS,
 ];
 
 export function getModelById(id: string): AIModelData | undefined {

@@ -55,7 +55,10 @@ export default function ConversationView({ onReady }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: msgs }),
     });
-    if (!res.ok) throw new Error('Chat API fout');
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({})) as { error?: string };
+      throw new Error(body.error ?? 'Chat API fout');
+    }
     return res.json();
   }
 
@@ -163,8 +166,9 @@ export default function ConversationView({ onReady }: Props) {
         </div>
 
         {hint && (
-          <div role="note" className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
-            💡 {hint}
+          <div role="note" className="px-4 py-3 bg-amber-50 border-t border-amber-100 text-xs text-amber-800 space-y-0.5">
+            <p className="font-semibold uppercase tracking-wide text-amber-600" style={{ fontSize: '0.65rem' }}>Wat betekent dit?</p>
+            <p className="leading-relaxed">{hint}</p>
           </div>
         )}
 

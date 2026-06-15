@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft, ExternalLink, Loader2, CheckCircle2, XCircle,
-  AlertCircle, Download, Heart, Zap, Shield, Coins, BookOpen,
+  AlertCircle, Download, Heart, Zap, Shield, Coins, BookOpen, ImageIcon,
 } from 'lucide-react';
 import { AI_MODELS } from '../../data/models';
 import { PRICING } from '../../data/pricing';
@@ -103,6 +103,16 @@ export default function ModelDetailPanel({ modelId, modelName, onBack }: Props) 
                       {staticModel.contextK >= 1000
                         ? `${staticModel.contextK / 1000}M`
                         : `${staticModel.contextK}K`} context
+                    </span>
+                  )}
+                  {staticModel.imageGeneration ? (
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200 font-medium flex items-center gap-1">
+                      <ImageIcon className="w-3 h-3" />
+                      Kan afbeeldingen genereren
+                    </span>
+                  ) : (
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 font-medium">
+                      Alleen tekst
                     </span>
                   )}
                 </>

@@ -13,6 +13,7 @@ export default async function handler(request: Request): Promise<Response> {
   const { messages } = await request.json() as { messages: Array<{ role: string; content: string }> };
 
   const systemPrompt = `Je bent een AI consultant die een discovery-gesprek voert om het beste AI-model aan te bevelen.
+De gebruiker is NIET per se technisch. Gebruik altijd begrijpelijke taal, geen vakjargon zonder uitleg.
 
 Je doel is 7 onderwerpen te behandelen door gerichte FOLLOW-UP VRAGEN te stellen:
 1. useCase – wat bouwt of lost de gebruiker op? (chatbot, RAG, classificatie, samenvatting, code, vision, agents)
@@ -27,16 +28,28 @@ Regels:
 - Stel MAXIMAAL ÉÉN vraag per keer
 - Als een antwoord meerdere topics dekt, update coveredTopics dienovereenkomstig
 - Wees conversational en beknopt (niet meer dan 2 zinnen + 1 vraag)
+- Gebruik GEEN Engelse termen in de vraag zelf — vraag bijv. "Hoe snel moet het antwoord komen?" in plaats van "Wat zijn je latency-eisen?"
 - Na 4-6 uitwisselingen, of zodra je de 5 meest kritieke topics hebt (useCase, scale, latency, budget, privacy), return type "ready"
 - Bij "ready": geef een bondig scenario-object terug op basis van het gesprek
+
+Het "hint" veld is VERPLICHT bij elke vraag. Gebruik het om:
+- technische begrippen simpel uit te leggen in gewone taal
+- een of twee concrete voorbeelden te geven (bijv. getallen, situaties)
+- de gebruiker te helpen een schatting te maken als hij het niet zeker weet
+
+Voorbeelden van goede hints:
+- Voor schaal: "Geen idee? Schat: 10 gebruikers × 5 vragen/dag = 50 verzoeken/dag, dat is klein. Een grote webshop kan 10.000+ verzoeken/dag hebben."
+- Voor snelheid: "Real-time = reactie binnen 1 seconde, bijv. live chatbot. Batch = mag minuten duren, bijv. een nachtelijke rapportage."
+- Voor budget: "Kleine projecten: €10-50/maand. Middelgroot: €50-300/maand. Enterprise: €500+/maand. Gratis opties bestaan ook."
+- Voor privacy: "Wil je data in de EU houden (bijv. vanwege AVG/GDPR), of mag het naar servers in de VS?"
 
 Geef JSON terug in dit EXACTE formaat:
 
 Bij een vervolgvraag:
 {
   "type": "question",
-  "question": "De vraag die je stelt",
-  "hint": "Korte toelichting of voorbeeld voor de gebruiker",
+  "question": "De vraag die je stelt (in begrijpelijke Nederlandse taal, geen jargon)",
+  "hint": "Uitleg van begrippen + concrete voorbeelden zodat ook niet-techneuten kunnen antwoorden",
   "coveredTopics": ["useCase", "scale"]
 }
 
@@ -79,6 +92,12 @@ Wanneer je genoeg info hebt:
     if (!res.ok) {
       const err = await res.text();
       console.error('Groq chat fout:', res.status, err);
+      if (res.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Te veel gelijktijdige verzoeken — wacht even en probeer opnieuw.' }),
+          { status: 429 },
+        );
+      }
       return new Response(JSON.stringify({ error: `Groq API fout (${res.status})` }), { status: 502 });
     }
 
