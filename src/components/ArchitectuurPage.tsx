@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Copy, Check, Download } from 'lucide-react';
 import ArchitectuurDiagram from './ArchitectuurDiagram';
 
 const TABS = [
@@ -130,12 +130,31 @@ Geef 3-5 aanbevelingen, inclusief ten minste één budgetvriendelijke optie als 
 export default function ArchitectuurPage() {
   const [activeTab, setActiveTab] = useState<TabId>('architectuur');
   const [copied, setCopied] = useState(false);
+  const diagramRef = useRef<HTMLDivElement>(null);
 
   function copyPrompt() {
     navigator.clipboard.writeText(PROMPT_TEXT).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  }
+
+  async function downloadDiagram() {
+    if (!diagramRef.current) return;
+
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(diagramRef.current, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+      });
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `activity-diagram-${new Date().toISOString().slice(0, 10)}.png`;
+      link.click();
+    } catch (err) {
+      console.error('Download mislukt:', err);
+    }
   }
 
   return (
@@ -295,19 +314,29 @@ export default function ArchitectuurPage() {
 
       {activeTab === 'diagram' && (
         <div className="space-y-4 text-sm text-slate-700">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="font-semibold text-slate-900">Activiteitendiagram</p>
-            <p className="mt-2 text-slate-600">
-              Deze visualisatie toont de architectuurflow vanuit de browser naar Vercel, Groq, HuggingFace en Supabase.
-              Gebruik deze tab voor een overzichtelijke weergave van de applicatie-architectuur zonder andere info door elkaar.
-            </p>
-            <p className="mt-3 text-xs text-slate-500">
-              Klik in het diagram om te scrollen of vergroot je browser voor betere leesbaarheid. Op kleine schermen kun je horizontaal scrollen.
-            </p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex-1">
+              <p className="font-semibold text-slate-900">Activiteitendiagram</p>
+              <p className="mt-2 text-slate-600">
+                Deze visualisatie toont de architectuurflow vanuit de browser naar Vercel, Groq, HuggingFace en Supabase.
+                Gebruik deze tab voor een overzichtelijke weergave van de applicatie-architectuur zonder andere info door elkaar.
+              </p>
+              <p className="mt-3 text-xs text-slate-500">
+                Klik in het diagram om te scrollen of vergroot je browser voor betere leesbaarheid. Op kleine schermen kun je horizontaal scrollen.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={downloadDiagram}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors flex-shrink-0 h-fit"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Download</span>
+            </button>
           </div>
           <div className="-mx-4 sm:-mx-6 rounded-none sm:rounded-3xl overflow-x-auto border-t border-b sm:border border-slate-200 shadow-sm">
             <div className="inline-block min-w-full p-4 sm:p-0">
-              <ArchitectuurDiagram />
+              <ArchitectuurDiagram ref={diagramRef} />
             </div>
           </div>
         </div>
