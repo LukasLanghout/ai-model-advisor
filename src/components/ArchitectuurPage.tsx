@@ -305,8 +305,10 @@ export default function ArchitectuurPage() {
               Klik in het diagram om te scrollen of vergroot je browser voor betere leesbaarheid. Op kleine schermen kun je horizontaal scrollen.
             </p>
           </div>
-          <div className="rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-            <ArchitectuurDiagram />
+          <div className="-mx-4 sm:-mx-6 rounded-none sm:rounded-3xl overflow-x-auto border-t border-b sm:border border-slate-200 shadow-sm">
+            <div className="inline-block min-w-full p-4 sm:p-0">
+              <ArchitectuurDiagram />
+            </div>
           </div>
         </div>
       )}
