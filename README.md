@@ -1,4 +1,4 @@
-# AI Model Advisor — Handover Document
+# AI Model Advisor | Handover Document
 
 **Versie 1.0 · Juni 2026 · Lukas Langhout**
 
