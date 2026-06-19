@@ -3,6 +3,7 @@ import { Copy, Check } from 'lucide-react';
 
 const TABS = [
   { id: 'architectuur', label: 'Architectuuroverzicht' },
+  { id: 'diagram',      label: 'Activiteitendiagram' },
   { id: 'logica',       label: 'Redeneerlogica' },
   { id: 'prompt',       label: 'Volledige prompt (api/recommend.ts)' },
 ] as const;
@@ -141,8 +142,8 @@ export default function ArchitectuurPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Redeneerlogica & Systeemprompt</h1>
-        <p className="text-sm text-slate-500 mt-1">Hoe de webapp een AI-model kiest — <code className="bg-slate-100 px-1 rounded text-xs">api/recommend.ts</code></p>
+        <h1 className="text-2xl font-bold text-slate-900">Architectuuroverzicht</h1>
+        <p className="text-sm text-slate-500 mt-1">Bekijk de architectuur van de app met een overzichtelijke activity diagram, API-logica en de promptflow.</p>
       </div>
 
       {/* Tabs */}
@@ -315,6 +316,25 @@ export default function ArchitectuurPage() {
             </div>
           </div>
 
+        </div>
+      )}
+
+      {activeTab === 'diagram' && (
+        <div className="space-y-4 text-sm text-slate-700">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="font-semibold text-slate-900">Activiteitendiagram</p>
+            <p className="mt-2 text-slate-600">
+              Deze visualisatie toont de architectuurflow vanuit de browser naar Vercel, Groq, HuggingFace en Supabase.
+              Gebruik deze tab voor een overzichtelijke weergave van de applicatie-architectuur zonder andere info door elkaar.
+            </p>
+          </div>
+          <div className="rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+            <iframe
+              src="/architectuur-activity-diagram.html"
+              title="Activity diagram AI Model Advisor"
+              className="w-full min-h-[760px] h-[80vh] border-0"
+            />
+          </div>
         </div>
       )}
 
