@@ -29,7 +29,7 @@ Een interactieve webapp die via een AI-gestuurd discovery-gesprek het beste AI-m
 De AI Model Advisor leidt gebruikers in vijf stappen naar de juiste AI-keuze:
 
 **Stap 1 — Introscherm**  
-Uitleg over de tool en een overzicht van de beschikbare functies. Gebruikers kunnen ook direct de Model Explorer openen om alle 111 modellen te doorzoeken.
+Uitleg over de tool en een overzicht van de beschikbare functies. Gebruikers kunnen ook direct de Model Explorer openen om alle 111 modellen en HuggingFace modellen te doorzoeken.
 
 **Stap 2 — Discovery-gesprek**  
 Een chatgesprek waarbij de AI 7 gerichte vragen stelt: use case, schaal/volume, latency, budget, privacy, vereiste talen en contextvenster. De AI legt bij elke vraag in begrijpelijke taal uit wat het begrip betekent.
