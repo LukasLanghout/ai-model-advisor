@@ -10,12 +10,12 @@ type Arrow = {
 };
 
 const ARROWS: Arrow[] = [
-  // connectors from the top summary into the main columns
-  { fromId: 'summary-frontend', toId: 'browser-start', label: '', color: '#0f172a', flow: 'connector' },
-  { fromId: 'summary-edge', toId: 'edge-chat', label: '', color: '#0f172a', flow: 'connector' },
-  { fromId: 'summary-groq', toId: 'groq-prompt', label: '', color: '#0f172a', flow: 'connector' },
-  { fromId: 'summary-hf', toId: 'hf-trending', label: '', color: '#0f172a', flow: 'connector' },
-  { fromId: 'summary-supabase', toId: 'supabase-db', label: '', color: '#0f172a', flow: 'connector' },
+  // connectors from the top summary into the main column headers (abstract summary)
+  { fromId: 'summary-frontend', toId: 'col-browser', label: '', color: '#94a3b8', flow: 'connector' },
+  { fromId: 'summary-edge', toId: 'col-edge', label: '', color: '#94a3b8', flow: 'connector' },
+  { fromId: 'summary-groq', toId: 'col-groq', label: '', color: '#94a3b8', flow: 'connector' },
+  { fromId: 'summary-hf', toId: 'col-hf', label: '', color: '#94a3b8', flow: 'connector' },
+  { fromId: 'summary-supabase', toId: 'col-supabase', label: '', color: '#94a3b8', flow: 'connector' },
 
   { fromId: 'supabase-db', toId: 'browser-start', label: 'Laad modellen / gidsen', color: '#16a34a', flow: 'recommend' },
   { fromId: 'browser-start', toId: 'browser-use-case', label: 'Start session', color: '#0f172a' },
@@ -53,34 +53,67 @@ function createMarker(svg: SVGSVGElement) {
 
   const poly = document.createElementNS(svgNS, 'polygon');
   poly.setAttribute('points', '0 0, 10 4, 0 8');
-  poly.setAttribute('fill', '#334155');
+  poly.setAttribute('fill', '#111827');
   marker.appendChild(poly);
   defs.appendChild(marker);
   svg.appendChild(defs);
 }
 
-function getCenter(element: HTMLElement, container: HTMLElement) {
-  const bounding = element.getBoundingClientRect();
+/* getCenter removed: routing now uses getEdgePoints to avoid drawing through node centers */
+
+function getEdgePoints(fromEl: HTMLElement, toEl: HTMLElement, container: HTMLElement) {
+  const fromRect = fromEl.getBoundingClientRect();
+  const toRect = toEl.getBoundingClientRect();
   const containerRect = container.getBoundingClientRect();
-  return {
-    x: bounding.left - containerRect.left + bounding.width / 2,
-    y: bounding.top - containerRect.top + bounding.height / 2,
+  const fromCenter = {
+    x: fromRect.left - containerRect.left + fromRect.width / 2,
+    y: fromRect.top - containerRect.top + fromRect.height / 2,
   };
+  const toCenter = {
+    x: toRect.left - containerRect.left + toRect.width / 2,
+    y: toRect.top - containerRect.top + toRect.height / 2,
+  };
+
+  const dx = toCenter.x - fromCenter.x;
+  const dy = toCenter.y - fromCenter.y;
+
+  // choose edge points: horizontal or vertical exit depending on dominant axis
+  if (Math.abs(dx) > Math.abs(dy)) {
+    const start = { x: fromCenter.x + Math.sign(dx) * (fromRect.width / 2), y: fromCenter.y };
+    const end = { x: toCenter.x - Math.sign(dx) * (toRect.width / 2), y: toCenter.y };
+    return { start, end };
+  }
+
+  const start = { x: fromCenter.x, y: fromCenter.y + Math.sign(dy) * (fromRect.height / 2) };
+  const end = { x: toCenter.x, y: toCenter.y - Math.sign(dy) * (toRect.height / 2) };
+  return { start, end };
 }
 
-function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLElement, toEl: HTMLElement, label: string, color: string, curvature = 0) {
-  const start = getCenter(fromEl, container);
-  const end = getCenter(toEl, container);
+function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLElement, toEl: HTMLElement, label: string, color: string, curvature = 0, flow?: Arrow['flow']) {
+  const pts = getEdgePoints(fromEl, toEl, container);
+  const start = pts.start;
+  const end = pts.end;
   const midX = (start.x + end.x) / 2;
   const midY = (start.y + end.y) / 2;
-  const labelY = midY + (start.y < end.y ? -16 : 16);
+  const labelY = midY + (start.y < end.y ? -14 : 14);
 
-  // simple lane offsets to reduce crossing: heuristics based on label and color
+  // flow-based colors (darker strokes for readability)
+  const FLOW_COLORS: Record<string, string> = {
+    chat: '#2563eb', // blue
+    recommend: '#16a34a', // green
+    models: '#0f766e', // teal
+    image: '#f97316', // orange
+    connector: '#94a3b8', // muted gray
+  };
+  const stroke = flow ? FLOW_COLORS[flow] ?? color ?? '#374151' : color ?? '#374151';
+
+  // lane offset for connectors: push connectors above the main area
   let laneOffset = 0;
-  if (label.includes('POST /api/chat') || label.toLowerCase().includes('chat') || color === '#60a5fa') laneOffset = -80;
-  else if (label.toLowerCase().includes('recommend') || color === '#0ea5a4') laneOffset = -20;
-  else if (color === '#0f766e') laneOffset = 60;
-  else if (color === '#fb923c') laneOffset = 120;
+  if (flow === 'connector') laneOffset = -160;
+  else if (flow === 'chat') laneOffset = -60;
+  else if (flow === 'recommend') laneOffset = -10;
+  else if (flow === 'models') laneOffset = 40;
+  else if (flow === 'image') laneOffset = 80;
 
   const c1x = midX + curvature;
   const c1y = start.y + laneOffset;
@@ -89,7 +122,7 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
 
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', `M${start.x},${start.y} C${c1x},${c1y} ${c2x},${c2y} ${end.x},${end.y}`);
-  path.setAttribute('stroke', '#374151');
+  path.setAttribute('stroke', stroke);
   path.setAttribute('stroke-width', '3');
   path.setAttribute('fill', 'none');
   path.setAttribute('marker-end', 'url(#arrowhead)');
@@ -97,29 +130,31 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
   path.setAttribute('stroke-linejoin', 'round');
   svg.appendChild(path);
 
-  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  text.setAttribute('x', String(midX));
-  text.setAttribute('y', String(labelY));
-  text.setAttribute('text-anchor', 'middle');
-  text.setAttribute('font-size', '12');
-  text.setAttribute('fill', '#0f172a');
-  text.setAttribute('font-family', 'Segoe UI, sans-serif');
-  text.textContent = label;
-  svg.appendChild(text);
+  if (label) {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', String(midX));
+    text.setAttribute('y', String(labelY));
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', '12');
+    text.setAttribute('fill', '#0f172a');
+    text.setAttribute('font-family', 'Segoe UI, sans-serif');
+    text.textContent = label;
+    svg.appendChild(text);
 
-  const bbox = text.getBBox();
-  const pad = 6;
-  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rect.setAttribute('x', String(bbox.x - pad));
-  rect.setAttribute('y', String(bbox.y - pad));
-  rect.setAttribute('width', String(bbox.width + pad * 2));
-  rect.setAttribute('height', String(bbox.height + pad * 2));
-  rect.setAttribute('fill', 'rgba(255,255,255,0.98)');
-  rect.setAttribute('stroke', '#e6eef6');
-  rect.setAttribute('stroke-width', '1');
-  rect.setAttribute('rx', '6');
-  rect.setAttribute('ry', '6');
-  svg.insertBefore(rect, text);
+    const bbox = text.getBBox();
+    const pad = 6;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', String(bbox.x - pad));
+    rect.setAttribute('y', String(bbox.y - pad));
+    rect.setAttribute('width', String(bbox.width + pad * 2));
+    rect.setAttribute('height', String(bbox.height + pad * 2));
+    rect.setAttribute('fill', 'rgba(255,255,255,0.98)');
+    rect.setAttribute('stroke', '#e6eef6');
+    rect.setAttribute('stroke-width', '1');
+    rect.setAttribute('rx', '6');
+    rect.setAttribute('ry', '6');
+    svg.insertBefore(rect, text);
+  }
 }
 
 function renderArrows(overlay: SVGSVGElement, container: HTMLElement) {
@@ -133,7 +168,7 @@ function renderArrows(overlay: SVGSVGElement, container: HTMLElement) {
     const fromEl = document.getElementById(arrow.fromId);
     const toEl = document.getElementById(arrow.toId);
     if (!fromEl || !toEl) continue;
-    drawArrow(overlay, container, fromEl, toEl, arrow.label, arrow.color, arrow.curvature ?? 0);
+    drawArrow(overlay, container, fromEl, toEl, arrow.label, arrow.color, arrow.curvature ?? 0, arrow.flow);
   }
 }
 
@@ -161,7 +196,7 @@ export default function ArchitectuurDiagram() {
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div className="relative w-full min-h-[920px] p-5" ref={containerRef}>
+      <div className="relative w-full min-h-[1100px] p-5 pb-10" ref={containerRef}>
         <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
         <div className="space-y-3">
@@ -184,7 +219,7 @@ export default function ArchitectuurDiagram() {
 
           <div className="grid gap-4 xl:grid-cols-5 items-start">
             <div className="space-y-3">
-              <div className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] text-white">Browser / React</div>
+              <div id="col-browser" className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] text-white">Browser / React</div>
               <div id="browser-start" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">App start</div>
                 <div className="mt-1 text-slate-700 text-sm">Initieert UI en laadt data</div>
@@ -208,7 +243,7 @@ export default function ArchitectuurDiagram() {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl bg-sky-300 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-slate-900">Vercel Edge</div>
+              <div id="col-edge" className="rounded-2xl bg-sky-300 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-slate-900">Vercel Edge</div>
               <div id="edge-chat" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
                 <div className="font-semibold text-slate-900">POST /api/chat</div>
                 <div className="mt-2 text-slate-600">Verwerkt chatverzoek</div>
@@ -228,7 +263,7 @@ export default function ArchitectuurDiagram() {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Groq API</div>
+              <div id="col-groq" className="rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Groq API</div>
               <div id="groq-prompt" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
                 <div className="font-semibold text-slate-900">Prompt bouwen</div>
                 <div className="mt-2 text-slate-600">Maakt contextrijke prompt</div>
@@ -244,7 +279,7 @@ export default function ArchitectuurDiagram() {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl bg-teal-800 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">HuggingFace</div>
+              <div id="col-hf" className="rounded-2xl bg-teal-800 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">HuggingFace</div>
               <div id="hf-trending" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
                 <div className="font-semibold text-slate-900">Trending ophalen</div>
                 <div className="mt-2 text-slate-600">HuggingFace zoekt topmodellen</div>
@@ -256,7 +291,7 @@ export default function ArchitectuurDiagram() {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Supabase</div>
+              <div id="col-supabase" className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Supabase</div>
               <div id="supabase-db" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
                 <div className="font-semibold text-slate-900">Supabase databron</div>
                 <div className="mt-2 space-y-1 text-slate-600">
