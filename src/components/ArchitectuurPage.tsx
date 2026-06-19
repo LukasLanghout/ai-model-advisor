@@ -169,154 +169,127 @@ export default function ArchitectuurPage() {
 
       {/* ── TAB 1: Architectuur ── */}
       {activeTab === 'architectuur' && (
-        <div className="space-y-2 text-xs">
-
-          {/* Legend */}
-          <div className="flex flex-wrap gap-3 mb-4">
-            {[
-              { color: 'bg-teal-600', label: 'Frontend (React/Vite/Tailwind)' },
-              { color: 'bg-slate-700', label: 'Vercel Edge (25s timeout)' },
-              { color: 'bg-indigo-700', label: 'Vercel Node (60s timeout)' },
-              { color: 'bg-orange-600', label: 'Groq API' },
-              { color: 'bg-yellow-500', label: 'HuggingFace API' },
-            ].map((l) => (
-              <span key={l.label} className="flex items-center gap-1.5 text-slate-600">
-                <span className={`w-2.5 h-2.5 rounded-sm flex-shrink-0 ${l.color}`} />
-                {l.label}
-              </span>
-            ))}
+        <div className="space-y-6 text-sm text-slate-700">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <p className="text-base font-semibold text-slate-900">Samenvatting</p>
+            <p className="mt-3 text-slate-600 leading-relaxed">
+              AI Model Advisor gebruikt een React frontend op Vercel. De aanbevelingslogica draait via Edge Functions en gebruikt Groq voor reasoning, HuggingFace voor modelinformatie en Supabase voor opslag van modellen, prijzen en use-case gidsen.
+            </p>
           </div>
 
-          {/* ── Layer 1: Browser ── */}
-          <div className="rounded-xl border border-teal-300 bg-teal-50 p-3">
-            <p className="text-xs font-bold text-teal-800 mb-2 uppercase tracking-wide">Gebruiker (browser)</p>
-            <p className="text-[10px] text-teal-600 mb-3 font-medium">React + Vite · Vercel · Groq · HuggingFace · Supabase</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-
-              {/* App-stroom */}
-              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                <p className="font-semibold text-teal-800 mb-1.5">App-stroom</p>
-                {['1 · Introscherm', '2 · Discovery-gesprek', '3 · Laadscherm', '4 · Resultaten + tabs', '5 · Model Explorer'].map((s) => (
-                  <p key={s} className="text-slate-600 leading-relaxed">{s}</p>
-                ))}
-                <div className="mt-2 pt-2 border-t border-slate-100">
-                  <p className="font-medium text-slate-700 mb-1">Resultaten-tabs</p>
-                  {['Aanbevelingen (ModelCard)', 'Aan de slag (gids + code)', 'Beslissingspad (DecisionTree)', 'Kosten (CostCalculator)', 'Playground (tekst + beeld)', 'Compliance (AVG/GDPR-tabel)'].map((t) => (
-                    <p key={t} className="text-slate-500 leading-relaxed">{t}</p>
-                  ))}
-                </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="font-semibold text-slate-900 mb-3">Gebruikersflow</p>
+              <div className="space-y-3 text-slate-600">
+                <div className="rounded-2xl bg-slate-100 p-3">Gebruiker</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Use case kiezen</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Advies ontvangen</div>
               </div>
+            </div>
 
-              {/* Lokale data */}
-              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                <p className="font-semibold text-teal-800 mb-1.5">Lokale data</p>
-                {['111 modellen (models.ts)', 'Prijsdata (pricing.ts)', 'GDPR-data (compliance.ts)', 'Naam via localStorage'].map((s) => (
-                  <p key={s} className="text-slate-600 leading-relaxed">{s}</p>
-                ))}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="font-semibold text-slate-900 mb-3">Backend flow</p>
+              <div className="space-y-3 text-slate-600">
+                <div className="rounded-2xl bg-slate-100 p-3">React frontend</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Vercel Edge API</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Groq &amp; HuggingFace</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Resultaat terug naar browser</div>
               </div>
+            </div>
 
-              {/* PDF */}
-              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                <p className="font-semibold text-teal-800 mb-1.5">PDF-export</p>
-                <p className="text-slate-600">@react-pdf/renderer</p>
-                <p className="text-slate-500 mt-1">Gegenereerd in de browser — geen server nodig</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="font-semibold text-slate-900 mb-3">Datalaag</p>
+              <div className="space-y-3 text-slate-600">
+                <div className="rounded-2xl bg-slate-100 p-3">Supabase</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Modellen</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Prijzen</div>
+                <div className="text-center text-slate-400">↓</div>
+                <div className="rounded-2xl bg-slate-100 p-3">Use-case gidsen</div>
               </div>
             </div>
           </div>
 
-          {/* Connector */}
-          <div className="text-center text-slate-400 py-0.5 text-sm tracking-widest">HTTPS / fetch</div>
-
-          {/* ── Layer 2: Vercel API ── */}
-          <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
-            <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Vercel Serverless API routes</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-
-              {/* Conversatie & Advies */}
-              <div className="bg-slate-700 text-slate-100 rounded-lg p-2.5">
-                <p className="font-semibold mb-0.5">Conversatie & Advies</p>
-                <p className="text-slate-400 text-[10px] mb-2">Edge — max 25s</p>
-                {['/api/chat', '/api/recommend', '/api/compare-models', '/api/getting-started', '/api/model-info'].map((r) => (
-                  <p key={r} className="font-mono text-teal-300 leading-relaxed">{r}</p>
-                ))}
-              </div>
-
-              {/* Playground */}
-              <div className="rounded-lg p-2.5 space-y-2">
-                <div className="bg-slate-700 text-slate-100 rounded-lg p-2">
-                  <p className="font-semibold mb-0.5">Playground tekst</p>
-                  <p className="text-slate-400 text-[10px] mb-1.5">Edge — max 25s</p>
-                  <p className="font-mono text-teal-300">/api/playground</p>
-                  <p className="text-slate-400 mt-1">3 modellen parallel</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="font-semibold text-slate-900 mb-3">Waarom deze keuzes?</p>
+              <div className="grid gap-2 text-slate-600 text-sm">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">Vercel Edge</p>
+                  <p className="mt-1">Lage latency en snelle API-response voor realtime advies.</p>
                 </div>
-                <div className="bg-indigo-700 text-slate-100 rounded-lg p-2">
-                  <p className="font-semibold mb-0.5">Playground beeld</p>
-                  <p className="text-slate-400 text-[10px] mb-1.5">Node — max 60s</p>
-                  <p className="font-mono text-teal-300">/api/image-gen</p>
-                  <p className="text-slate-400 mt-1">FLUX & SD3</p>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">Groq</p>
+                  <p className="mt-1">Sterke reasoning en model ranking voor advieslogica.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">HuggingFace</p>
+                  <p className="mt-1">Rijke modelinformatie en beeldgeneratie via bekende API’s.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">Supabase</p>
+                  <p className="mt-1">Eenvoudige opslag voor feedback, prijzen en gidsdata.</p>
                 </div>
               </div>
+            </div>
 
-              {/* Explorer & Feedback */}
-              <div className="bg-slate-700 text-slate-100 rounded-lg p-2.5">
-                <p className="font-semibold mb-0.5">Explorer & Feedback</p>
-                <p className="text-slate-400 text-[10px] mb-2">Edge — max 25s</p>
-                <p className="font-mono text-teal-300">/api/hf-models</p>
-                <p className="text-slate-400 mt-1">HuggingFace zoekindex</p>
-                <div className="mt-2 pt-2 border-t border-slate-600">
-                  <p className="text-slate-300">FeedbackWidget</p>
-                  <p className="text-slate-400">Schrijft naar Supabase</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="font-semibold text-slate-900 mb-3">Belangrijke cijfers</p>
+              <div className="grid gap-3 text-slate-600 text-sm">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">111 modellen</p>
+                  <p className="mt-1">De app rankt alle modellen op basis van privacy, budget en latency.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">3 AI providers</p>
+                  <p className="mt-1">Groq voor reasoning, HuggingFace voor metadata en beeld, Supabase voor opslag.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">4 API endpoints</p>
+                  <p className="mt-1">Chat, recommend, playground en image generation.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="font-semibold text-slate-900">< 3s gemiddelde responstijd</p>
+                  <p className="mt-1">Edge functies en snelle AI-API’s houden de flow vlot.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Connector */}
-          <div className="text-center text-slate-400 py-0.5 text-sm tracking-widest">REST / Bearer token &amp; anon key</div>
-
-          {/* ── Layer 3: Externe diensten ── */}
-          <div className="rounded-xl border border-slate-200 bg-white p-3">
-            <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Externe diensten</p>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-
-              {/* Groq */}
-              <div className="bg-orange-600 text-white rounded-lg p-2.5">
-                <p className="font-semibold mb-1.5">Groq Cloud</p>
-                <p className="text-orange-100 font-medium">Llama 3.3 70B Versatile</p>
-                <p className="text-orange-200 mt-1">Chat · Advies · Analyse</p>
-                <p className="text-orange-200">Getting-started gids</p>
-                <p className="text-orange-200 mt-1 font-mono text-[10px]">~300 tokens/sec</p>
-                <p className="text-orange-300 mt-1.5 font-mono text-[10px]">GROQ_API_KEY</p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="font-semibold text-slate-900 mb-2">Logische lagen</p>
+            <div className="grid gap-3 text-slate-600 text-sm">
+              <div>
+                <p className="font-semibold text-slate-900">Frontend</p>
+                <p className="mt-1">Browser / React</p>
               </div>
-
-              {/* HuggingFace */}
-              <div className="bg-yellow-500 text-slate-900 rounded-lg p-2.5">
-                <p className="font-semibold mb-1.5">HuggingFace</p>
-                <p className="font-medium">FLUX.1-schnell</p>
-                <p className="text-slate-700">Beeldgeneratie ~3s</p>
-                <p className="font-medium mt-1.5">Stable Diffusion 3</p>
-                <p className="text-slate-700">Beeldgeneratie ~15s</p>
-                <p className="font-medium mt-1.5">HF Model Search API</p>
-                <p className="text-slate-800 mt-1.5 font-mono text-[10px]">HF_API_KEY</p>
+              <div>
+                <p className="font-semibold text-slate-900">Backend</p>
+                <p className="mt-1">Vercel Edge</p>
               </div>
-
-              {/* Supabase */}
-              <div className="bg-emerald-700 text-white rounded-lg p-2.5">
-                <p className="font-semibold mb-1.5">Supabase</p>
-                <p className="text-emerald-100">student_feedback tabel</p>
-                <p className="text-emerald-200 mt-1">RLS: anon insert-only</p>
-                <p className="text-emerald-300 mt-1.5 font-mono text-[10px]">Publishable key (embed-safe)</p>
+              <div>
+                <p className="font-semibold text-slate-900">AI Services</p>
+                <p className="mt-1">Groq API, HuggingFace</p>
               </div>
-
-              {/* CI/CD */}
-              <div className="bg-slate-100 border border-slate-200 rounded-lg p-2.5">
-                <p className="font-semibold text-slate-800 mb-1.5">GitHub / Vercel CI/CD</p>
-                <p className="text-slate-600">Push naar main</p>
-                <p className="text-slate-600">→ auto-deploy</p>
+              <div>
+                <p className="font-semibold text-slate-900">Data</p>
+                <p className="mt-1">Supabase</p>
               </div>
             </div>
           </div>
 
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="font-semibold text-slate-900">Technische details</p>
+            <p className="mt-2 text-slate-600 leading-relaxed">
+              Wil je de volledige technische activiteitendiagram zien? Ga naar de tab <strong>Activiteitendiagram</strong> voor het uitgebreide schema met endpoints en datastromen.
+            </p>
+          </div>
         </div>
       )}
 
