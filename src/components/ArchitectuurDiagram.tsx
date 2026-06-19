@@ -71,8 +71,8 @@ function drawArrow(svg: SVGSVGElement, fromEl: HTMLElement, toEl: HTMLElement, l
   svg.appendChild(path);
 
   const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  txt.setAttribute('x', mx);
-  txt.setAttribute('y', (y1 + y2) / 2 - 8);
+  txt.setAttribute('x', String(mx));
+  txt.setAttribute('y', String((y1 + y2) / 2 - 8));
   txt.setAttribute('text-anchor', 'middle');
   txt.setAttribute('font-size', '10');
   txt.setAttribute('fill', '#334155');
