@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 
 const TABS = [
-  { id: 'logica',  label: 'Redeneerlogica' },
-  { id: 'prompt',  label: 'Volledige prompt (api/recommend.ts)' },
+  { id: 'architectuur', label: 'Architectuuroverzicht' },
+  { id: 'logica',       label: 'Redeneerlogica' },
+  { id: 'prompt',       label: 'Volledige prompt (api/recommend.ts)' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -125,7 +126,7 @@ Output JSON-structuur:
 Geef 3-5 aanbevelingen, inclusief ten minste één budgetvriendelijke optie als het budget niet unlimited is.`;
 
 export default function ArchitectuurPage() {
-  const [activeTab, setActiveTab] = useState<TabId>('logica');
+  const [activeTab, setActiveTab] = useState<TabId>('architectuur');
   const [copied, setCopied] = useState(false);
 
   function copyPrompt() {
@@ -164,7 +165,160 @@ export default function ArchitectuurPage() {
         </div>
       </div>
 
-      {/* ── TAB 1: Logica ── */}
+      {/* ── TAB 1: Architectuur ── */}
+      {activeTab === 'architectuur' && (
+        <div className="space-y-2 text-xs">
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-3 mb-4">
+            {[
+              { color: 'bg-teal-600', label: 'Frontend (React/Vite/Tailwind)' },
+              { color: 'bg-slate-700', label: 'Vercel Edge (25s timeout)' },
+              { color: 'bg-indigo-700', label: 'Vercel Node (60s timeout)' },
+              { color: 'bg-orange-600', label: 'Groq API' },
+              { color: 'bg-yellow-500', label: 'HuggingFace API' },
+            ].map((l) => (
+              <span key={l.label} className="flex items-center gap-1.5 text-slate-600">
+                <span className={`w-2.5 h-2.5 rounded-sm flex-shrink-0 ${l.color}`} />
+                {l.label}
+              </span>
+            ))}
+          </div>
+
+          {/* ── Layer 1: Browser ── */}
+          <div className="rounded-xl border border-teal-300 bg-teal-50 p-3">
+            <p className="text-xs font-bold text-teal-800 mb-2 uppercase tracking-wide">Gebruiker (browser)</p>
+            <p className="text-[10px] text-teal-600 mb-3 font-medium">React + Vite · Vercel · Groq · HuggingFace · Supabase</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+
+              {/* App-stroom */}
+              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
+                <p className="font-semibold text-teal-800 mb-1.5">App-stroom</p>
+                {['1 · Introscherm', '2 · Discovery-gesprek', '3 · Laadscherm', '4 · Resultaten + tabs', '5 · Model Explorer'].map((s) => (
+                  <p key={s} className="text-slate-600 leading-relaxed">{s}</p>
+                ))}
+                <div className="mt-2 pt-2 border-t border-slate-100">
+                  <p className="font-medium text-slate-700 mb-1">Resultaten-tabs</p>
+                  {['Aanbevelingen (ModelCard)', 'Aan de slag (gids + code)', 'Beslissingspad (DecisionTree)', 'Kosten (CostCalculator)', 'Playground (tekst + beeld)', 'Compliance (AVG/GDPR-tabel)'].map((t) => (
+                    <p key={t} className="text-slate-500 leading-relaxed">{t}</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lokale data */}
+              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
+                <p className="font-semibold text-teal-800 mb-1.5">Lokale data</p>
+                {['111 modellen (models.ts)', 'Prijsdata (pricing.ts)', 'GDPR-data (compliance.ts)', 'Naam via localStorage'].map((s) => (
+                  <p key={s} className="text-slate-600 leading-relaxed">{s}</p>
+                ))}
+              </div>
+
+              {/* PDF */}
+              <div className="bg-white border border-teal-200 rounded-lg p-2.5">
+                <p className="font-semibold text-teal-800 mb-1.5">PDF-export</p>
+                <p className="text-slate-600">@react-pdf/renderer</p>
+                <p className="text-slate-500 mt-1">Gegenereerd in de browser — geen server nodig</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Connector */}
+          <div className="text-center text-slate-400 py-0.5 text-sm tracking-widest">HTTPS / fetch</div>
+
+          {/* ── Layer 2: Vercel API ── */}
+          <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
+            <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Vercel Serverless API routes</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+
+              {/* Conversatie & Advies */}
+              <div className="bg-slate-700 text-slate-100 rounded-lg p-2.5">
+                <p className="font-semibold mb-0.5">Conversatie & Advies</p>
+                <p className="text-slate-400 text-[10px] mb-2">Edge — max 25s</p>
+                {['/api/chat', '/api/recommend', '/api/compare-models', '/api/getting-started', '/api/model-info'].map((r) => (
+                  <p key={r} className="font-mono text-teal-300 leading-relaxed">{r}</p>
+                ))}
+              </div>
+
+              {/* Playground */}
+              <div className="rounded-lg p-2.5 space-y-2">
+                <div className="bg-slate-700 text-slate-100 rounded-lg p-2">
+                  <p className="font-semibold mb-0.5">Playground tekst</p>
+                  <p className="text-slate-400 text-[10px] mb-1.5">Edge — max 25s</p>
+                  <p className="font-mono text-teal-300">/api/playground</p>
+                  <p className="text-slate-400 mt-1">3 modellen parallel</p>
+                </div>
+                <div className="bg-indigo-700 text-slate-100 rounded-lg p-2">
+                  <p className="font-semibold mb-0.5">Playground beeld</p>
+                  <p className="text-slate-400 text-[10px] mb-1.5">Node — max 60s</p>
+                  <p className="font-mono text-teal-300">/api/image-gen</p>
+                  <p className="text-slate-400 mt-1">FLUX & SD3</p>
+                </div>
+              </div>
+
+              {/* Explorer & Feedback */}
+              <div className="bg-slate-700 text-slate-100 rounded-lg p-2.5">
+                <p className="font-semibold mb-0.5">Explorer & Feedback</p>
+                <p className="text-slate-400 text-[10px] mb-2">Edge — max 25s</p>
+                <p className="font-mono text-teal-300">/api/hf-models</p>
+                <p className="text-slate-400 mt-1">HuggingFace zoekindex</p>
+                <div className="mt-2 pt-2 border-t border-slate-600">
+                  <p className="text-slate-300">FeedbackWidget</p>
+                  <p className="text-slate-400">Schrijft naar Supabase</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Connector */}
+          <div className="text-center text-slate-400 py-0.5 text-sm tracking-widest">REST / Bearer token &amp; anon key</div>
+
+          {/* ── Layer 3: Externe diensten ── */}
+          <div className="rounded-xl border border-slate-200 bg-white p-3">
+            <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Externe diensten</p>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+
+              {/* Groq */}
+              <div className="bg-orange-600 text-white rounded-lg p-2.5">
+                <p className="font-semibold mb-1.5">Groq Cloud</p>
+                <p className="text-orange-100 font-medium">Llama 3.3 70B Versatile</p>
+                <p className="text-orange-200 mt-1">Chat · Advies · Analyse</p>
+                <p className="text-orange-200">Getting-started gids</p>
+                <p className="text-orange-200 mt-1 font-mono text-[10px]">~300 tokens/sec</p>
+                <p className="text-orange-300 mt-1.5 font-mono text-[10px]">GROQ_API_KEY</p>
+              </div>
+
+              {/* HuggingFace */}
+              <div className="bg-yellow-500 text-slate-900 rounded-lg p-2.5">
+                <p className="font-semibold mb-1.5">HuggingFace</p>
+                <p className="font-medium">FLUX.1-schnell</p>
+                <p className="text-slate-700">Beeldgeneratie ~3s</p>
+                <p className="font-medium mt-1.5">Stable Diffusion 3</p>
+                <p className="text-slate-700">Beeldgeneratie ~15s</p>
+                <p className="font-medium mt-1.5">HF Model Search API</p>
+                <p className="text-slate-800 mt-1.5 font-mono text-[10px]">HF_API_KEY</p>
+              </div>
+
+              {/* Supabase */}
+              <div className="bg-emerald-700 text-white rounded-lg p-2.5">
+                <p className="font-semibold mb-1.5">Supabase</p>
+                <p className="text-emerald-100">student_feedback tabel</p>
+                <p className="text-emerald-200 mt-1">RLS: anon insert-only</p>
+                <p className="text-emerald-300 mt-1.5 font-mono text-[10px]">Publishable key (embed-safe)</p>
+              </div>
+
+              {/* CI/CD */}
+              <div className="bg-slate-100 border border-slate-200 rounded-lg p-2.5">
+                <p className="font-semibold text-slate-800 mb-1.5">GitHub / Vercel CI/CD</p>
+                <p className="text-slate-600">Push naar main</p>
+                <p className="text-slate-600">→ auto-deploy</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ── TAB 2: Logica ── */}
       {activeTab === 'logica' && (
         <div className="space-y-4">
 
