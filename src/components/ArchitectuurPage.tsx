@@ -255,7 +255,7 @@ export default function ArchitectuurPage() {
                   <p className="mt-1">Chat, recommend, playground en image generation.</p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <p className="font-semibold text-slate-900">< 3s gemiddelde responstijd</p>
+                  <p className="font-semibold text-slate-900">&lt; 3s gemiddelde responstijd</p>
                   <p className="mt-1">Edge functies en snelle AI-API’s houden de flow vlot.</p>
                 </div>
               </div>
