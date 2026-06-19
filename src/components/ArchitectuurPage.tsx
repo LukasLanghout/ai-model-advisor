@@ -10,49 +10,49 @@ type TabId = (typeof TABS)[number]['id'];
 
 const RULES = [
   {
-    icon: '🔒', title: 'Privacy-filter (harde eis)', color: 'border-red-500',
+    title: 'Privacy-filter (harde eis)', color: 'border-red-500',
     bg: 'bg-red-50', ifLine: 'ALS privacy = on-premise / strikt',
     then: ['Alleen modellen met green privacy-status', 'Cloud-only (OpenAI, Anthropic) worden uitgesloten'],
-    ok: '✓ Mistral EU · Llama self-hosted · open-source modellen',
+    ok: 'Mistral EU · Llama self-hosted · open-source modellen',
   },
   {
-    icon: '🇨🇳', title: 'Chinese providers (GDPR-risico)', color: 'border-red-600',
+    title: 'Chinese providers (GDPR-risico)', color: 'border-red-600',
     bg: 'bg-red-50', ifLine: 'ALS Qwen / DeepSeek / ERNIE via cloud',
     then: ['Waarschuwing: self-hosting verplicht voor GDPR', 'Worden niet aangeraden als cloud-optie'],
-    ok: '✓ Wel aanbevolen als self-hosted open-source',
+    ok: 'Wel aanbevolen als self-hosted open-source',
   },
   {
-    icon: '💶', title: 'Budget-filter', color: 'border-amber-500',
+    title: 'Budget-filter', color: 'border-amber-500',
     bg: 'bg-amber-50', ifLine: 'ALS budget = hobby / klein',
     then: ['Prioriteer gratis self-hosted of goedkope cloud', 'Altijd minstens 1 gratis optie in top 3–5'],
-    ok: '✓ Groq gratis · Llama self-hosted · Mistral gratis',
+    ok: 'Groq gratis · Llama self-hosted · Mistral gratis',
   },
   {
-    icon: '⚡', title: 'Latency-filter', color: 'border-sky-500',
+    title: 'Latency-filter', color: 'border-sky-500',
     bg: 'bg-sky-50', ifLine: 'ALS latency = real-time (<1s)',
     then: ['Prioriteer Groq (300+ tokens/s)', 'Of kleine modellen (7B–8B)'],
-    ok: '✓ Groq API · Llama 3.1 8B · Mistral 7B',
+    ok: 'Groq API · Llama 3.1 8B · Mistral 7B',
   },
   {
-    icon: '🇳🇱', title: 'Nederlands vereist', color: 'border-emerald-500',
+    title: 'Nederlands vereist', color: 'border-emerald-500',
     bg: 'bg-emerald-50', ifLine: 'ALS talen bevat Nederlands',
     then: ['Voorkeur voor modellen met sterk Nederlands', 'GPT-4o · Qwen2.5 · BLOOM · Mistral'],
-    ok: '✓ GPT-4o · Mistral Large · Qwen2.5 72B (self-hosted)',
+    ok: 'GPT-4o · Mistral Large · Qwen2.5 72B (self-hosted)',
   },
   {
-    icon: '💻', title: 'Code-use case', color: 'border-violet-500',
+    title: 'Code-use case', color: 'border-violet-500',
     bg: 'bg-violet-50', ifLine: 'ALS use case = code / development',
     then: ['Prioriteer gespecialiseerde code-modellen'],
-    ok: '✓ Qwen2.5 Coder · CodeLlama · StarCoder2 · DeepSeek Coder · Phi-4',
+    ok: 'Qwen2.5 Coder · CodeLlama · StarCoder2 · DeepSeek Coder · Phi-4',
   },
   {
-    icon: '🔍', title: 'RAG / embeddings', color: 'border-orange-500',
+    title: 'RAG / embeddings', color: 'border-orange-500',
     bg: 'bg-orange-50', ifLine: 'ALS use case = RAG / vector search',
     then: ['Overweeg embedding-model als aanvulling', 'Command R als RAG-specialist'],
-    ok: '✓ nomic-embed · BGE Large · Cohere Command R',
+    ok: 'nomic-embed · BGE Large · Cohere Command R',
   },
   {
-    icon: '⚙️', title: 'MoE-modellen', color: 'border-slate-400',
+    title: 'MoE-modellen', color: 'border-slate-400',
     bg: 'bg-slate-50', ifLine: 'ALS model = Mixture of Experts',
     then: ['Vermeld: efficiënt in berekening', 'Maar: meer RAM nodig dan params suggereren'],
     ok: 'bijv. Mixtral 8x22B: 140B params maar ~80GB VRAM',
@@ -179,15 +179,15 @@ export default function ArchitectuurPage() {
           {/* Signals */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              { emoji: '🔒', label: 'Privacy', sub: 'on-premise / EU / cloud', cls: 'bg-red-50 border-red-200 text-red-700' },
-              { emoji: '💶', label: 'Budget', sub: '€0 · €50 · €200 · onbeperkt', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
-              { emoji: '⚡', label: 'Snelheid', sub: '<1s · 1-5s · batch', cls: 'bg-sky-50 border-sky-200 text-sky-700' },
-              { emoji: '🎯', label: 'Use case', sub: 'code · RAG · chat · beeld', cls: 'bg-violet-50 border-violet-200 text-violet-700' },
-              { emoji: '🌍', label: 'Taal', sub: 'Nederlands vereist?', cls: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
-              { emoji: '📊', label: 'Schaal', sub: 'tokens per maand', cls: 'bg-orange-50 border-orange-200 text-orange-700' },
+              { label: 'Privacy', sub: 'on-premise / EU / cloud', cls: 'bg-red-50 border-red-200 text-red-700' },
+              { label: 'Budget', sub: '€0 · €50 · €200 · onbeperkt', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
+              { label: 'Snelheid', sub: '<1s · 1-5s · batch', cls: 'bg-sky-50 border-sky-200 text-sky-700' },
+              { label: 'Use case', sub: 'code · RAG · chat · beeld', cls: 'bg-violet-50 border-violet-200 text-violet-700' },
+              { label: 'Taal', sub: 'Nederlands vereist?', cls: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
+              { label: 'Schaal', sub: 'tokens per maand', cls: 'bg-orange-50 border-orange-200 text-orange-700' },
             ].map((s) => (
               <div key={s.label} className={`rounded-lg px-3 py-2 border text-center ${s.cls}`}>
-                <p className="text-sm font-semibold">{s.emoji} {s.label}</p>
+                <p className="text-sm font-semibold">{s.label}</p>
                 <p className="text-xs opacity-75 mt-0.5">{s.sub}</p>
               </div>
             ))}
@@ -199,9 +199,7 @@ export default function ArchitectuurPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {RULES.map((rule) => (
               <div key={rule.title} className={`rounded-lg p-3 border-l-4 ${rule.bg} ${rule.color}`}>
-                <p className="text-sm font-bold text-slate-800 mb-1.5">
-                  <span className="mr-1">{rule.icon}</span>{rule.title}
-                </p>
+                <p className="text-sm font-bold text-slate-800 mb-1.5">{rule.title}</p>
                 <p className="text-xs text-amber-700 italic mb-1">{rule.ifLine}</p>
                 {rule.then.map((t) => (
                   <p key={t} className="text-xs text-slate-700 leading-relaxed">→ {t}</p>
