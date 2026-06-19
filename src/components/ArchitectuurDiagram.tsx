@@ -9,23 +9,19 @@ type Arrow = {
 };
 
 const ARROWS: Arrow[] = [
-  { fromId: 'n3', toId: 'e1', label: 'POST /api/chat: user vraag', color: '#1d4ed8' },
-  { fromId: 'e1', toId: 'g1', label: 'Build prompt + messages', color: '#7c3aed' },
-  { fromId: 'g1', toId: 'e1b', label: 'Stream chunks naar client', color: '#7c3aed' },
-  { fromId: 'e1b', toId: 'n4', label: 'Client ontvangt stream', color: '#1d4ed8' },
-  { fromId: 'n6', toId: 'e2', label: 'POST /api/recommend: scenario + modellen', color: '#1d4ed8' },
-  { fromId: 'e2', toId: 'g2', label: 'Rank & reason 111 modellen', color: '#7c3aed' },
-  { fromId: 'g2', toId: 'e2b', label: 'Return JSON scores', color: '#7c3aed' },
-  { fromId: 'e2b', toId: 'n7', label: 'Toon aanbevelingen', color: '#1d4ed8' },
-  { fromId: 'n9', toId: 'e3', label: '/api/getting-started', color: '#1d4ed8' },
-  { fromId: 'e3', toId: 'g3', label: 'Use case + gids', color: '#7c3aed' },
-  { fromId: 'n10', toId: 'e4', label: '/api/hf-models', color: '#1d4ed8' },
-  { fromId: 'e4', toId: 'h1', label: 'Model search', color: '#0369a1' },
-  { fromId: 'n11', toId: 'e5', label: '/api/playground', color: '#1d4ed8' },
-  { fromId: 'e5', toId: 'g4', label: '3× parallel inference', color: '#7c3aed' },
-  { fromId: 'n12', toId: 'e6', label: '/api/image-gen', color: '#1d4ed8' },
-  { fromId: 'e6', toId: 'h2', label: 'FLUX.1 / SD3 inference', color: '#0369a1' },
-  { fromId: 'n14', toId: 's1', label: 'INSERT via anon key', color: '#065f46' },
+  { fromId: 'supabase-load', toId: 'browser-start', label: 'Laad modellen & gidsen', color: '#16a34a' },
+  { fromId: 'browser-use-case', toId: 'edge-recommend', label: 'POST /api/recommend', color: '#60a5fa', curvature: 60 },
+  { fromId: 'browser-chat', toId: 'edge-chat', label: 'POST /api/chat', color: '#60a5fa', curvature: 60 },
+  { fromId: 'edge-chat', toId: 'groq-prompt', label: 'Prompt bouwen', color: '#7c3aed' },
+  { fromId: 'groq-prompt', toId: 'groq-stream', label: 'Stream antwoord', color: '#7c3aed' },
+  { fromId: 'groq-stream', toId: 'browser-result-chat', label: 'Toon antwoord', color: '#1e3a8a' },
+  { fromId: 'edge-recommend', toId: 'supabase-guides', label: 'Haalt gids op', color: '#60a5fa', curvature: 40 },
+  { fromId: 'edge-recommend', toId: 'groq-rank', label: 'Rank modellen', color: '#7c3aed' },
+  { fromId: 'groq-rank', toId: 'browser-result-recommend', label: 'Toon aanbevelingen', color: '#1e3a8a' },
+  { fromId: 'edge-models', toId: 'hf-trending', label: 'Trending ophalen', color: '#60a5fa' },
+  { fromId: 'hf-trending', toId: 'browser-result-models', label: 'Toon modellen', color: '#1e3a8a' },
+  { fromId: 'edge-image', toId: 'hf-image', label: 'Genereer afbeelding', color: '#60a5fa' },
+  { fromId: 'hf-image', toId: 'browser-result-image', label: 'Toon afbeelding', color: '#1e3a8a' },
 ];
 
 function createMarker(svg: SVGSVGElement) {
@@ -33,16 +29,16 @@ function createMarker(svg: SVGSVGElement) {
   const defs = document.createElementNS(svgNS, 'defs');
   const marker = document.createElementNS(svgNS, 'marker');
   marker.setAttribute('id', 'arrowhead');
-  marker.setAttribute('markerWidth', '8');
-  marker.setAttribute('markerHeight', '6');
-  marker.setAttribute('refX', '8');
-  marker.setAttribute('refY', '3');
+  marker.setAttribute('markerWidth', '10');
+  marker.setAttribute('markerHeight', '8');
+  marker.setAttribute('refX', '9');
+  marker.setAttribute('refY', '4');
   marker.setAttribute('orient', 'auto');
   marker.setAttribute('markerUnits', 'strokeWidth');
 
   const poly = document.createElementNS(svgNS, 'polygon');
-  poly.setAttribute('points', '0 0, 8 3, 0 6');
-  poly.setAttribute('fill', '#64748b');
+  poly.setAttribute('points', '0 0, 10 4, 0 8');
+  poly.setAttribute('fill', '#334155');
   marker.appendChild(poly);
   defs.appendChild(marker);
   svg.appendChild(defs);
@@ -90,7 +86,7 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
   rect.setAttribute('y', String(bbox.y - pad));
   rect.setAttribute('width', String(bbox.width + pad * 2));
   rect.setAttribute('height', String(bbox.height + pad * 2));
-  rect.setAttribute('fill', 'rgba(255,255,255,0.9)');
+  rect.setAttribute('fill', 'rgba(255,255,255,0.95)');
   rect.setAttribute('stroke', '#e2e8f0');
   rect.setAttribute('stroke-width', '1');
   rect.setAttribute('rx', '6');
@@ -103,7 +99,7 @@ function renderArrows(overlay: SVGSVGElement, container: HTMLElement) {
   createMarker(overlay);
 
   const containerRect = container.getBoundingClientRect();
-  overlay.setAttribute('viewBox', `0 0 ${Math.max(containerRect.width, 2800)} ${Math.max(containerRect.height, 900)}`);
+  overlay.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
 
   for (const arrow of ARROWS) {
     const fromEl = document.getElementById(arrow.fromId);
@@ -136,155 +132,129 @@ export default function ArchitectuurDiagram() {
   }, []);
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-x-auto">
-      <div className="relative min-w-[2800px] min-h-[760px] p-5" ref={containerRef}>
+    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="relative w-full min-h-[820px] p-5" ref={containerRef}>
         <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
-        <div className="grid min-w-[3400px] grid-cols-[240px_minmax(0,1fr)] gap-6 text-sm text-slate-800">
-          <div className="space-y-6">
-            <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Browser / React</div>
-            <div className="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Vercel Edge</div>
-            <div className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Groq API</div>
-            <div className="rounded-2xl bg-sky-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">HuggingFace</div>
-            <div className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Supabase</div>
+        <div className="space-y-4">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 shadow-sm">
+            <div className="font-semibold text-slate-900 mb-3">Samenvattende flow</div>
+            <div className="grid gap-3 text-center text-xs sm:grid-cols-6 sm:text-sm">
+              <div className="rounded-2xl bg-slate-900 px-3 py-2 text-white">Gebruiker</div>
+              <div className="flex items-center justify-center text-slate-400">↓</div>
+              <div className="rounded-2xl bg-sky-900 px-3 py-2 text-white">React Frontend</div>
+              <div className="flex items-center justify-center text-slate-400">↓</div>
+              <div className="rounded-2xl bg-sky-300 px-3 py-2 text-slate-900">Vercel Edge API</div>
+              <div className="flex items-center justify-center text-slate-400">↓</div>
+              <div className="rounded-2xl bg-violet-500 px-3 py-2 text-white">AI Services</div>
+              <div className="flex items-center justify-center text-slate-400">↓</div>
+              <div className="rounded-2xl bg-emerald-600 px-3 py-2 text-white">Supabase Data</div>
+              <div className="flex items-center justify-center text-slate-400">↓</div>
+              <div className="rounded-2xl bg-slate-900 px-3 py-2 text-white">Resultaat</div>
+            </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="grid grid-flow-col auto-cols-max gap-4">
-              <div id="n1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">App start</div>
-                <div className="mt-2 text-sm text-slate-600">Laadt modellen, prijzen en GDPR-data</div>
+          <div className="grid gap-4 lg:grid-cols-5">
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Browser / React</div>
+              <div id="browser-start" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">App start</div>
+                <div className="mt-2 text-slate-600">Laadt modellen, prijzen en gidsen</div>
               </div>
-              <div id="n2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Gebruiker kiest</div>
-                <div className="mt-2 text-sm text-slate-600">Start advies en kiest use case</div>
+              <div id="browser-use-case" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Use case kiezen</div>
+                <div className="mt-2 text-slate-600">Gebruiker selecteert scenario</div>
               </div>
-              <div id="n3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">POST /api/chat</div>
-                <div className="mt-2 text-sm text-slate-600">Verstuurt vraag + context</div>
+              <div id="browser-chat" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Vraag stellen</div>
+                <div className="mt-2 text-slate-600">Gebruiker voert input in</div>
               </div>
-              <div id="n4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Streaming antwoord</div>
-                <div className="mt-2 text-sm text-slate-600">UI toont chunks terwijl Groq streamt</div>
+              <div id="browser-result-chat" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Toon chatantwoord</div>
+                <div className="mt-2 text-slate-600">Streaming reactie in UI</div>
               </div>
-              <div id="n5" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Scenario bouwen</div>
-                <div className="mt-2 text-sm text-slate-600">Vormt scenario met modeldata</div>
+              <div id="browser-result-recommend" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Toon aanbevelingen</div>
+                <div className="mt-2 text-slate-600">Top modellen met score</div>
               </div>
-              <div id="n6" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">POST /api/recommend</div>
-                <div className="mt-2 text-sm text-slate-600">Stuurt scenario + modellen naar Edge</div>
+              <div id="browser-result-models" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Toon modellen</div>
+                <div className="mt-2 text-slate-600">Trending resultaten tonen</div>
               </div>
-              <div id="n7" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Toon aanbevelingen</div>
-                <div className="mt-2 text-sm text-slate-600">UI toont ranking, score en reasoning</div>
-              </div>
-              <div id="n9" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Getting started</div>
-                <div className="mt-2 text-sm text-slate-600">Laadt gidsen en codevoorbeelden</div>
-              </div>
-              <div id="n10" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Model Explorer</div>
-                <div className="mt-2 text-sm text-slate-600">Zoekt en toont trending modellen</div>
-              </div>
-              <div id="n11" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Playground</div>
-                <div className="mt-2 text-sm text-slate-600">Voert prompts uit met meerdere modellen</div>
-              </div>
-              <div id="n12" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Image gen</div>
-                <div className="mt-2 text-sm text-slate-600">Genereert afbeeldingen via API</div>
-              </div>
-              <div id="n13" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">PDF export</div>
-                <div className="mt-2 text-sm text-slate-600">Maakt rapporten en samenvattingen</div>
-              </div>
-              <div id="n14" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Feedback</div>
-                <div className="mt-2 text-sm text-slate-600">Verstuurt feedback naar Supabase</div>
+              <div id="browser-result-image" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Toon afbeelding</div>
+                <div className="mt-2 text-slate-600">Gegenereerde beeldresultaten</div>
               </div>
             </div>
 
-            <div className="grid grid-flow-col auto-cols-max gap-4">
-              <div id="e1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/chat</div>
-                <div className="mt-2 text-sm text-slate-600">Opbouw prompt en doorsturen naar Groq</div>
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-sky-300 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-slate-900">Vercel Edge</div>
+              <div id="edge-chat" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">POST /api/chat</div>
+                <div className="mt-2 text-slate-600">Verstuurt vraag naar AI service</div>
               </div>
-              <div id="e1b" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Streaming</div>
-                <div className="mt-2 text-sm text-slate-600">SSE chunks terug naar browser</div>
+              <div id="edge-recommend" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">POST /api/recommend</div>
+                <div className="mt-2 text-slate-600">Verwerkt use case en filters</div>
               </div>
-              <div id="e2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/recommend</div>
-                <div className="mt-2 text-sm text-slate-600">Rankt 111 modellen en geeft reasoning</div>
+              <div id="edge-models" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">GET /api/hf-models</div>
+                <div className="mt-2 text-slate-600">Zoekt trending modellen</div>
               </div>
-              <div id="e2b" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">JSON antwoord</div>
-                <div className="mt-2 text-sm text-slate-600">Bevat score, ranking en aanbeveling</div>
-              </div>
-              <div id="e3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/getting-started</div>
-                <div className="mt-2 text-sm text-slate-600">Bereidt gidsen voor</div>
-              </div>
-              <div id="e4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/hf-models</div>
-                <div className="mt-2 text-sm text-slate-600">Zoekt trending modellen</div>
-              </div>
-              <div id="e5" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/playground</div>
-                <div className="mt-2 text-sm text-slate-600">3 modellen parallel uitvoeren</div>
-              </div>
-              <div id="e6" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">/api/image-gen</div>
-                <div className="mt-2 text-sm text-slate-600">Start beeldgeneratie</div>
+              <div id="edge-image" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">POST /api/image-gen</div>
+                <div className="mt-2 text-slate-600">Start beeldgeneratie</div>
               </div>
             </div>
 
-            <div className="grid grid-flow-col auto-cols-max gap-4">
-              <div id="g1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Llama 3.3 70B chat</div>
-                <div className="mt-2 text-sm text-slate-600">Streamt antwoord en genereert prompt</div>
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Groq API</div>
+              <div id="groq-prompt" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Prompt bouwen</div>
+                <div className="mt-2 text-slate-600">Combineert vraag met context</div>
               </div>
-              <div id="g2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Llama 3.3 70B ranking</div>
-                <div className="mt-2 text-sm text-slate-600">Rangt 111 modellen en geeft reasoning</div>
+              <div id="groq-rank" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Ranking</div>
+                <div className="mt-2 text-slate-600">Llama 3.3 70B selecteert top modellen</div>
               </div>
-              <div id="g3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Use case gids</div>
-                <div className="mt-2 text-sm text-slate-600">Bereidt uitleg en code voor</div>
-              </div>
-              <div id="g4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Parallel inference</div>
-                <div className="mt-2 text-sm text-slate-600">3× tegelijk resultaten terug</div>
+              <div id="groq-stream" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Streaming antwoord</div>
+                <div className="mt-2 text-slate-600">Beantwoordt vraag realtime</div>
               </div>
             </div>
 
-            <div className="grid grid-flow-col auto-cols-max gap-4">
-              <div id="h1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">Model Search API</div>
-                <div className="mt-2 text-sm text-slate-600">Haal trending modellen op</div>
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-teal-800 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">HuggingFace</div>
+              <div id="hf-trending" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Trending ophalen</div>
+                <div className="mt-2 text-slate-600">Zoekt trending modellen via HF</div>
               </div>
-              <div id="h2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">FLUX.1 / SD3</div>
-                <div className="mt-2 text-sm text-slate-600">Image inference via HuggingFace</div>
+              <div id="hf-image" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">FLUX.1 / SD3</div>
+                <div className="mt-2 text-slate-600">Genereert afbeelding</div>
               </div>
             </div>
 
-            <div className="grid grid-flow-col auto-cols-max gap-4">
-              <div id="s1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
-                <div className="text-sm font-semibold">student_feedback</div>
-                <div className="mt-2 text-sm text-slate-600">INSERT via anon key · alleen toevoegen</div>
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Supabase</div>
+              <div id="supabase-load" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Laad data</div>
+                <div className="mt-2 text-slate-600">Modellen, prijzen en gidsen</div>
+              </div>
+              <div id="supabase-guides" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+                <div className="font-semibold text-slate-900">Use case gidsen</div>
+                <div className="mt-2 text-slate-600">Gecombineerd met ranking</div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-6 flex flex-wrap gap-4 text-xs text-slate-600">
-          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-slate-900" />Browser / React</div>
-          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-sky-600" />Vercel Edge</div>
-          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-violet-600" />Groq API</div>
-          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-sky-900" />HuggingFace</div>
-          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-emerald-700" />Supabase</div>
+          <div className="grid gap-2 text-xs text-slate-600 sm:grid-cols-2 md:grid-cols-5">
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-slate-900" />Browser / React</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-sky-300" />Vercel Edge</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-violet-500" />Groq API</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-teal-800" />HuggingFace</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-emerald-600" />Supabase</div>
+          </div>
         </div>
       </div>
     </div>
