@@ -1,3 +1,5 @@
+import { useRef, forwardRef } from 'react';
+
 type System = 'browser' | 'vercel' | 'groq' | 'huggingface' | 'supabase';
 
 const SYSTEMS: Record<System, { label: string; bg: string; text: string; dot: string }> = {
@@ -91,9 +93,9 @@ function StepNode({ step, isLast, nextSystem }: { step: Step; isLast: boolean; n
   );
 }
 
-export default function ArchitectuurDiagram() {
+export const ArchitectuurDiagram = forwardRef<HTMLDivElement>((props, ref) => {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 space-y-8">
+    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 space-y-8" ref={ref}>
 
       {/* Legend */}
       <div>
@@ -184,4 +186,7 @@ export default function ArchitectuurDiagram() {
       </div>
     </div>
   );
-}
+});
+
+ArchitectuurDiagram.displayName = 'ArchitectuurDiagram';
+export default ArchitectuurDiagram;
