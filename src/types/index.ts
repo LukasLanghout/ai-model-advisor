@@ -100,7 +100,7 @@ export interface GettingStartedResult {
 }
 
 // ── App state ──────────────────────────────────────────────
-export type AppStep = 'intro' | 'conversation' | 'loading' | 'results' | 'explorer';
+export type AppStep = 'intro' | 'conversation' | 'loading' | 'results' | 'explorer' | 'architectuur';
 
 // ── Model Explorer ─────────────────────────────────────────
 export interface ModelInfoResult {

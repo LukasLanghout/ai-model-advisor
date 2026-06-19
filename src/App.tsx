@@ -8,9 +8,15 @@ import LoadingScreen from './components/LoadingScreen';
 import RecommendationsView from './components/Results/RecommendationsView';
 import ModelSearchPage from './components/ModelExplorer/ModelSearchPage';
 import FeedbackWidget from './components/FeedbackWidget';
+import ArchitectuurPage from './components/ArchitectuurPage';
+
+function getInitialStep(): AppStep {
+  if (window.location.pathname === '/architectuuroverzicht') return 'architectuur';
+  return 'intro';
+}
 
 export default function App() {
-  const [appStep, setAppStep]   = useState<AppStep>('intro');
+  const [appStep, setAppStep]   = useState<AppStep>(getInitialStep);
   const [prevStep, setPrevStep] = useState<AppStep>('intro');
   const [scenario, setScenario] = useState<ExtractedScenario | null>(null);
   const [result, setResult]     = useState<RecommendationResult | null>(null);
@@ -103,6 +109,8 @@ export default function App() {
                 onRestart={handleRestart}
               />
             )}
+
+            {appStep === 'architectuur' && <ArchitectuurPage />}
           </motion.div>
         </AnimatePresence>
       </main>

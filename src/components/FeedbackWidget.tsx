@@ -57,6 +57,14 @@ const SCREEN_CONFIG: Record<AppStep, { label: string; features: string[] }> = {
       'Design & layout',
     ],
   },
+  architectuur: {
+    label: 'Architectuuroverzicht',
+    features: [
+      'Redeneerlogica & selectieregels',
+      'Systeemprompt weergave',
+      'Design & layout',
+    ],
+  },
 };
 
 interface Draft {
