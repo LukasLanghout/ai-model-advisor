@@ -101,7 +101,7 @@ function renderArrows(overlay: SVGSVGElement, container: HTMLElement) {
   createMarker(overlay);
 
   const containerRect = container.getBoundingClientRect();
-  overlay.setAttribute('viewBox', `0 0 ${Math.max(containerRect.width, 1100)} ${Math.max(containerRect.height, 800)}`);
+  overlay.setAttribute('viewBox', `0 0 ${Math.max(containerRect.width, 2400)} ${Math.max(containerRect.height, 800)}`);
 
   for (const arrow of ARROWS) {
     const fromEl = document.getElementById(arrow.fromId);
@@ -135,105 +135,123 @@ export default function ArchitectuurDiagram() {
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-x-auto">
-      <div className="relative min-w-[1200px] p-4" ref={containerRef}>
+      <div className="relative min-w-[2400px] min-h-[620px] p-4" ref={containerRef}>
         <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
-        <div className="grid min-w-[1200px] grid-cols-5 gap-4 text-sm text-slate-800">
-          <div className="space-y-3">
+        <div className="grid min-w-[2400px] grid-cols-5 gap-8 text-sm text-slate-800">
+          <div className="min-w-[320px] space-y-4">
             <div className="rounded-2xl bg-slate-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Browser / React</div>
-            <div id="n1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">App laden</div>
-              <div className="mt-2 text-xs text-slate-600">Introscherm + lokale data (111 modellen, prijzen, GDPR)</div>
-            </div>
-            <div id="n2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Gebruiker klikt</div>
-              <div className="mt-2 text-xs text-slate-600">"Start Advisor"</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">App laden</div>
+                <div className="mt-2 text-xs text-slate-600">Introscherm + lokale data (111 modellen, prijzen, GDPR)</div>
+              </div>
+              <div id="n2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Gebruiker klikt</div>
+                <div className="mt-2 text-xs text-slate-600">"Start Advisor"</div>
+              </div>
             </div>
             <div className="rounded-2xl border-l-4 border-blue-500 bg-blue-50 p-3 text-xs text-slate-700">Discovery</div>
-            <div id="n3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Vraag versturen</div>
-              <div className="mt-2 text-xs text-slate-600">7× herhaling</div>
-            </div>
-            <div id="n4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Antwoord tonen</div>
-              <div className="mt-2 text-xs text-slate-600">stream chunk voor chunk</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Vraag versturen</div>
+                <div className="mt-2 text-xs text-slate-600">7× herhaling</div>
+              </div>
+              <div id="n4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Antwoord tonen</div>
+                <div className="mt-2 text-xs text-slate-600">stream chunk voor chunk</div>
+              </div>
             </div>
             <div className="rounded-2xl border-l-4 border-emerald-500 bg-emerald-50 p-3 text-xs text-slate-700">Aanbeveling</div>
-            <div id="n5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">Scenario-object opbouwen</div>
-            <div id="n6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">POST /api/recommend</div>
-              <div className="mt-2 text-xs text-slate-600">+ 111 modellen + 8 regels</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">Scenario-object opbouwen</div>
+              <div id="n6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">POST /api/recommend</div>
+                <div className="mt-2 text-xs text-slate-600">+ 111 modellen + 8 regels</div>
+              </div>
             </div>
-            <div id="n7" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Resultaten tonen</div>
-              <div className="mt-2 text-xs text-slate-600">6 tabbladen</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n7" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Resultaten tonen</div>
+                <div className="mt-2 text-xs text-slate-600">6 tabbladen</div>
+              </div>
+              <div id="n8" className="rounded-full border border-amber-300 bg-amber-100 p-3 text-center text-xs font-semibold text-amber-800">Actie?</div>
             </div>
-            <div className="rounded-2xl border-l-4 border-orange-500 bg-orange-50 p-3 text-xs text-slate-700">Acties na resultaat</div>
-            <div id="n8" className="rounded-full border border-amber-300 bg-amber-100 p-3 text-center text-xs font-semibold text-amber-800">Actie?</div>
-            <div id="n9" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Getting-started gids laden</div>
-            <div id="n10" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Model Explorer zoeken</div>
-            <div id="n11" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Playground tekst uitvoeren</div>
-            <div id="n12" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Afbeelding genereren</div>
-            <div id="n13" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">PDF exporteren</div>
-            <div id="n14" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Feedback insturen</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n9" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Getting-started gids laden</div>
+              <div id="n10" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Model Explorer zoeken</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n11" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Playground tekst uitvoeren</div>
+              <div id="n12" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Afbeelding genereren</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="n13" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">PDF exporteren</div>
+              <div id="n14" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Feedback insturen</div>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="min-w-[320px] space-y-4">
             <div className="rounded-2xl bg-sky-600 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Vercel Edge</div>
-            <div style={{ height: '62px' }} />
-            <div id="e1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">/api/chat</div>
-              <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · prompt opbouwen</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="e1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">/api/chat</div>
+                <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · prompt opbouwen</div>
+              </div>
+              <div id="e1b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Streaming chunks terug naar client</div>
             </div>
-            <div id="e1b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Streaming chunks terug naar client</div>
-            <div style={{ height: '70px' }} />
-            <div id="e2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">/api/recommend</div>
-              <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · 111 modellen + 8 regels</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="e2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">/api/recommend</div>
+                <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · 111 modellen + 8 regels</div>
+              </div>
+              <div id="e2b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">JSON aanbevelingen terug naar client</div>
             </div>
-            <div id="e2b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">JSON aanbevelingen terug naar client</div>
-            <div style={{ height: '50px' }} />
-            <div id="e3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/getting-started · Edge · 25s</div>
-            <div id="e4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/hf-models · Edge · 25s</div>
-            <div id="e5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/playground · Edge · 3 modellen parallel</div>
-            <div id="e6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/image-gen · Node · 60s timeout</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="e3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/getting-started · Edge · 25s</div>
+              <div id="e4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/hf-models · Edge · 25s</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="e5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/playground · Edge · 3 modellen parallel</div>
+              <div id="e6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/image-gen · Node · 60s timeout</div>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="min-w-[320px] space-y-4">
             <div className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Groq API</div>
-            <div style={{ height: '94px' }} />
-            <div id="g1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Llama 3.3 70B</div>
-              <div className="mt-2 text-xs text-slate-600">Streaming response · ~300 tokens/sec</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="g1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Llama 3.3 70B</div>
+                <div className="mt-2 text-xs text-slate-600">Streaming response · ~300 tokens/sec</div>
+              </div>
+              <div id="g2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Llama 3.3 70B</div>
+                <div className="mt-2 text-xs text-slate-600">Scoort 111 modellen · past 8 regels toe · JSON output</div>
+              </div>
             </div>
-            <div style={{ height: '70px' }} />
-            <div id="g2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Llama 3.3 70B</div>
-              <div className="mt-2 text-xs text-slate-600">Scoort 111 modellen · past 8 regels toe · JSON output</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="g3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Llama 3.3 70B · use-case gids + code</div>
+              <div id="g4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">3× Llama parallel · stream responses</div>
             </div>
-            <div style={{ height: '80px' }} />
-            <div id="g3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Llama 3.3 70B · use-case gids + code</div>
-            <div style={{ height: '70px' }} />
-            <div id="g4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">3× Llama parallel · stream responses</div>
           </div>
 
-          <div className="space-y-3">
+          <div className="min-w-[320px] space-y-4">
             <div className="rounded-2xl bg-sky-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">HuggingFace</div>
-            <div style={{ height: '320px' }} />
-            <div id="h1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">Model Search API</div>
-              <div className="mt-2 text-xs text-slate-600">live trending modellen</div>
-            </div>
-            <div style={{ height: '70px' }} />
-            <div id="h2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
-              <div className="font-semibold">FLUX.1-schnell</div>
-              <div className="text-xs text-slate-600 mt-1">Stable Diffusion 3 · Inference API</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div id="h1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">Model Search API</div>
+                <div className="mt-2 text-xs text-slate-600">live trending modellen</div>
+              </div>
+              <div id="h2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+                <div className="font-semibold">FLUX.1-schnell</div>
+                <div className="text-xs text-slate-600 mt-1">Stable Diffusion 3 · Inference API</div>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="min-w-[320px] space-y-4">
             <div className="rounded-2xl bg-emerald-700 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Supabase</div>
-            <div style={{ height: '420px' }} />
+            <div className="h-[240px]" />
             <div id="s1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
               <div className="font-semibold">student_feedback</div>
               <div className="mt-2 text-xs text-slate-600">INSERT via anon key · RLS: alleen invoegen</div>
