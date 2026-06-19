@@ -78,18 +78,15 @@ const FLOWS: FlowDef[] = [
   },
 ];
 
-function StepNode({ step, isLast }: { step: Step; isLast: boolean }) {
+function StepNode({ step, isLast, nextSystem }: { step: Step; isLast: boolean; nextSystem?: System }) {
   const s = SYSTEMS[step.system];
   return (
-    <div className="flex items-center gap-2 flex-shrink-0">
+    <div className="flex-shrink-0">
       <div className={`rounded-xl ${s.bg} ${s.text} px-4 py-3 min-w-[130px] max-w-[180px]`}>
         <div className="text-[10px] font-semibold opacity-70 uppercase tracking-wide mb-1">{s.label}</div>
         <div className="font-semibold text-sm leading-tight">{step.label}</div>
         {step.sub && <div className="text-[11px] opacity-75 mt-1 leading-tight">{step.sub}</div>}
       </div>
-      {!isLast && (
-        <div className="flex-shrink-0 text-slate-400 font-bold text-xl select-none">→</div>
-      )}
     </div>
   );
 }
@@ -114,18 +111,59 @@ export default function ArchitectuurDiagram() {
 
       {/* Flows */}
       <div className="space-y-6">
-        {FLOWS.map((flow) => (
-          <div key={flow.id} className={`rounded-2xl border ${flow.border} ${flow.bg} p-5`}>
-            <p className={`text-sm font-bold mb-4 ${flow.accent}`}>{flow.label}</p>
-            <div className="overflow-x-auto pb-1">
-              <div className="flex items-center gap-0 min-w-max">
-                {flow.steps.map((step, i) => (
-                  <StepNode key={i} step={step} isLast={i === flow.steps.length - 1} />
-                ))}
+        {FLOWS.map((flow) => {
+          // Groepeer stappen per systeem
+          const grouped: { system: System; steps: typeof flow.steps }[] = [];
+          for (const step of flow.steps) {
+            const last = grouped[grouped.length - 1];
+            if (last?.system === step.system) {
+              last.steps.push(step);
+            } else {
+              grouped.push({ system: step.system, steps: [step] });
+            }
+          }
+
+          return (
+            <div key={flow.id} className={`rounded-2xl border ${flow.border} ${flow.bg} p-5`}>
+              <p className={`text-sm font-bold mb-4 ${flow.accent}`}>{flow.label}</p>
+              <div className="overflow-x-auto pb-2">
+                <div className="flex items-stretch gap-3 min-w-max">
+                  {grouped.map((group, groupIdx) => {
+                    const isLastGroup = groupIdx === grouped.length - 1;
+                    return (
+                      <div key={groupIdx} className="flex items-stretch gap-0">
+                        {/* Kolom voor dit systeem */}
+                        <div className="flex flex-col gap-3">
+                          {group.steps.map((step, stepIdx) => {
+                            const isLastStep = stepIdx === group.steps.length - 1;
+                            return (
+                              <div key={stepIdx} className="flex flex-col items-center gap-0">
+                                <StepNode
+                                  step={step}
+                                  isLast={isLastGroup && isLastStep}
+                                  nextSystem={grouped[groupIdx + 1]?.system}
+                                />
+                                {/* Verticale pijl tussen stappen in dezelfde systeem */}
+                                {!isLastStep && (
+                                  <div className="text-slate-300 text-xs font-bold select-none -my-1">⬇</div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Horizontale pijl naar volgende systeem */}
+                        {!isLastGroup && (
+                          <div className="flex items-center px-2 text-slate-300 font-bold text-lg select-none">→</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Result */}
