@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import ArchitectuurDiagram from './ArchitectuurDiagram';
 
 const TABS = [
   { id: 'architectuur', label: 'Architectuuroverzicht' },
@@ -327,13 +328,12 @@ export default function ArchitectuurPage() {
               Deze visualisatie toont de architectuurflow vanuit de browser naar Vercel, Groq, HuggingFace en Supabase.
               Gebruik deze tab voor een overzichtelijke weergave van de applicatie-architectuur zonder andere info door elkaar.
             </p>
+            <p className="mt-3 text-xs text-slate-500">
+              Klik in het diagram om te scrollen of vergroot je browser voor betere leesbaarheid. Op kleine schermen kun je horizontaal scrollen.
+            </p>
           </div>
           <div className="rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-            <iframe
-              src="/architectuur-activity-diagram.html"
-              title="Activity diagram AI Model Advisor"
-              className="w-full min-h-[760px] h-[80vh] border-0"
-            />
+            <ArchitectuurDiagram />
           </div>
         </div>
       )}
