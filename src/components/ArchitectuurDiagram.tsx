@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+﻿import { useLayoutEffect, useRef } from 'react';
 
 type Arrow = {
   fromId: string;
@@ -48,65 +48,66 @@ function createMarker(svg: SVGSVGElement) {
   svg.appendChild(defs);
 }
 
-function drawArrow(svg: SVGSVGElement, fromEl: HTMLElement, toEl: HTMLElement, label: string, color: string, curvature = 0) {
-  const container = svg.parentElement;
-  if (!container) return;
-
+function getCenter(element: HTMLElement, container: HTMLElement) {
+  const bounding = element.getBoundingClientRect();
   const containerRect = container.getBoundingClientRect();
-  const fromRect = fromEl.getBoundingClientRect();
-  const toRect = toEl.getBoundingClientRect();
+  return {
+    x: bounding.left - containerRect.left + bounding.width / 2,
+    y: bounding.top - containerRect.top + bounding.height / 2,
+  };
+}
 
-  const x1 = fromRect.right - containerRect.left;
-  const y1 = fromRect.top + fromRect.height / 2 - containerRect.top;
-  const x2 = toRect.left - containerRect.left;
-  const y2 = toRect.top + toRect.height / 2 - containerRect.top;
+function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLElement, toEl: HTMLElement, label: string, color: string, curvature = 0) {
+  const start = getCenter(fromEl, container);
+  const end = getCenter(toEl, container);
+  const midX = (start.x + end.x) / 2;
 
-  const mx = (x1 + x2) / 2;
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', `M${x1},${y1} C${mx + curvature},${y1} ${mx - curvature},${y2} ${x2},${y2}`);
+  path.setAttribute('d', `M${start.x},${start.y} C${midX + curvature},${start.y} ${midX - curvature},${end.y} ${end.x},${end.y}`);
   path.setAttribute('stroke', color);
   path.setAttribute('stroke-width', '1.6');
   path.setAttribute('fill', 'none');
   path.setAttribute('marker-end', 'url(#arrowhead)');
+  path.setAttribute('stroke-linecap', 'round');
   svg.appendChild(path);
 
-  const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  txt.setAttribute('x', String(mx));
-  txt.setAttribute('y', String((y1 + y2) / 2 - 8));
-  txt.setAttribute('text-anchor', 'middle');
-  txt.setAttribute('font-size', '10');
-  txt.setAttribute('fill', '#334155');
-  txt.setAttribute('font-family', 'Segoe UI, sans-serif');
-  txt.textContent = label;
-  svg.appendChild(txt);
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', String(midX));
+  text.setAttribute('y', String((start.y + end.y) / 2 - 10));
+  text.setAttribute('text-anchor', 'middle');
+  text.setAttribute('font-size', '10');
+  text.setAttribute('fill', '#334155');
+  text.setAttribute('font-family', 'Segoe UI, sans-serif');
+  text.textContent = label;
+  svg.appendChild(text);
 
-  const bbox = txt.getBBox();
+  const bbox = text.getBBox();
   const pad = 5;
-  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  bg.setAttribute('x', String(bbox.x - pad));
-  bg.setAttribute('y', String(bbox.y - pad));
-  bg.setAttribute('width', String(bbox.width + pad * 2));
-  bg.setAttribute('height', String(bbox.height + pad * 2));
-  bg.setAttribute('fill', '#ffffff');
-  bg.setAttribute('stroke', '#e2e8f0');
-  bg.setAttribute('stroke-width', '1');
-  bg.setAttribute('rx', '4');
-  bg.setAttribute('ry', '4');
-  svg.insertBefore(bg, txt);
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', String(bbox.x - pad));
+  rect.setAttribute('y', String(bbox.y - pad));
+  rect.setAttribute('width', String(bbox.width + pad * 2));
+  rect.setAttribute('height', String(bbox.height + pad * 2));
+  rect.setAttribute('fill', '#ffffff');
+  rect.setAttribute('stroke', '#e2e8f0');
+  rect.setAttribute('stroke-width', '1');
+  rect.setAttribute('rx', '4');
+  rect.setAttribute('ry', '4');
+  svg.insertBefore(rect, text);
 }
 
-function drawAllArrows(overlay: SVGSVGElement, container: HTMLElement) {
+function renderArrows(overlay: SVGSVGElement, container: HTMLElement) {
   overlay.innerHTML = '';
   createMarker(overlay);
 
   const containerRect = container.getBoundingClientRect();
-  overlay.setAttribute('viewBox', `0 0 ${Math.max(containerRect.width, 1000)} ${Math.max(containerRect.height, 1000)}`);
+  overlay.setAttribute('viewBox', `0 0 ${Math.max(containerRect.width, 1100)} ${Math.max(containerRect.height, 800)}`);
 
   for (const arrow of ARROWS) {
     const fromEl = document.getElementById(arrow.fromId);
     const toEl = document.getElementById(arrow.toId);
     if (!fromEl || !toEl) continue;
-    drawArrow(overlay, fromEl, toEl, arrow.label, arrow.color, arrow.curvature ?? 0);
+    drawArrow(overlay, container, fromEl, toEl, arrow.label, arrow.color, arrow.curvature ?? 0);
   }
 }
 
@@ -114,15 +115,15 @@ export default function ArchitectuurDiagram() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<SVGSVGElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const overlay = overlayRef.current;
     if (!container || !overlay) return;
 
-    const render = () => drawAllArrows(overlay, container);
+    const render = () => renderArrows(overlay, container);
     render();
 
-    const observer = new ResizeObserver(() => render());
+    const observer = new ResizeObserver(render);
     observer.observe(container);
     window.addEventListener('resize', render);
 
@@ -134,142 +135,118 @@ export default function ArchitectuurDiagram() {
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-x-auto">
-      <div className="diagram-wrap relative min-w-[1200px]" ref={containerRef}>
-        <svg ref={overlayRef} className="overlay-svg absolute inset-0 w-full h-full pointer-events-none" />
+      <div className="relative min-w-[1200px] p-4" ref={containerRef}>
+        <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
-        <div className="flex items-stretch gap-0">
-          <div className="min-w-[220px] p-4 border-r border-slate-200 flex flex-col gap-3">
-            <div className="lane-head lh-browser">Browser / React</div>
-            <div className="node node-start mx-auto" />
-            <div id="n1" className="node n-browser">
-              App laden
-              <div className="text-[11px] text-slate-600 mt-1">Introscherm + lokale data (111 modellen, prijzen, GDPR)</div>
+        <div className="grid min-w-[1200px] grid-cols-5 gap-4 text-sm text-slate-800">
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-slate-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Browser / React</div>
+            <div id="n1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">App laden</div>
+              <div className="mt-2 text-xs text-slate-600">Introscherm + lokale data (111 modellen, prijzen, GDPR)</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="n2" className="node n-browser">
-              Gebruiker klikt
-              <div className="text-[11px] text-slate-600 mt-1">"Start Advisor"</div>
+            <div id="n2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Gebruiker klikt</div>
+              <div className="mt-2 text-xs text-slate-600">"Start Advisor"</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div className="phase-label">Discovery</div>
-            <div id="n3" className="node n-browser">
-              Vraag versturen
-              <div className="text-[11px] text-slate-600 mt-1">7× herhaling</div>
+            <div className="rounded-2xl border-l-4 border-blue-500 bg-blue-50 p-3 text-xs text-slate-700">Discovery</div>
+            <div id="n3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Vraag versturen</div>
+              <div className="mt-2 text-xs text-slate-600">7× herhaling</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="n4" className="node n-browser">
-              Antwoord tonen
-              <div className="text-[11px] text-slate-600 mt-1">stream chunk voor chunk</div>
+            <div id="n4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Antwoord tonen</div>
+              <div className="mt-2 text-xs text-slate-600">stream chunk voor chunk</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div className="phase-label">Aanbeveling</div>
-            <div id="n5" className="node n-browser">
-              Scenario-object opbouwen
+            <div className="rounded-2xl border-l-4 border-emerald-500 bg-emerald-50 p-3 text-xs text-slate-700">Aanbeveling</div>
+            <div id="n5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">Scenario-object opbouwen</div>
+            <div id="n6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">POST /api/recommend</div>
+              <div className="mt-2 text-xs text-slate-600">+ 111 modellen + 8 regels</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="n6" className="node n-browser">
-              POST /api/recommend
-              <div className="text-[11px] text-slate-600 mt-1">+ 111 modellen + 8 regels</div>
+            <div id="n7" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Resultaten tonen</div>
+              <div className="mt-2 text-xs text-slate-600">6 tabbladen</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="n7" className="node n-browser">
-              Resultaten tonen
-              <div className="text-[11px] text-slate-600 mt-1">6 tabbladen</div>
-            </div>
-            <div className="arrow-down" style={{ height: '16px' }} />
-            <div className="phase-label">Acties na resultaat</div>
-            <div id="n8" className="node n-decision">Actie?</div>
-            <div className="sp" />
-            <div id="n9" className="node n-browser text-[11px]">Getting-started gids laden</div>
-            <div className="sp-sm" />
-            <div id="n10" className="node n-browser text-[11px]">Model Explorer zoeken</div>
-            <div className="sp-sm" />
-            <div id="n11" className="node n-browser text-[11px]">Playground tekst uitvoeren</div>
-            <div className="sp-sm" />
-            <div id="n12" className="node n-browser text-[11px]">Afbeelding genereren</div>
-            <div className="sp-sm" />
-            <div id="n13" className="node n-browser text-[11px]">PDF exporteren</div>
-            <div className="sp-sm" />
-            <div id="n14" className="node n-browser text-[11px]">Feedback insturen</div>
-            <div className="sp" />
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div className="node node-end mx-auto" />
+            <div className="rounded-2xl border-l-4 border-orange-500 bg-orange-50 p-3 text-xs text-slate-700">Acties na resultaat</div>
+            <div id="n8" className="rounded-full border border-amber-300 bg-amber-100 p-3 text-center text-xs font-semibold text-amber-800">Actie?</div>
+            <div id="n9" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Getting-started gids laden</div>
+            <div id="n10" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Model Explorer zoeken</div>
+            <div id="n11" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Playground tekst uitvoeren</div>
+            <div id="n12" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Afbeelding genereren</div>
+            <div id="n13" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">PDF exporteren</div>
+            <div id="n14" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Feedback insturen</div>
           </div>
 
-          <div className="min-w-[220px] p-4 border-r border-slate-200 flex flex-col gap-3">
-            <div className="lane-head lh-edge">Vercel Edge</div>
-            <div style={{ height: '68px' }} />
-            <div id="e1" className="node n-edge">
-              /api/chat
-              <div className="text-[11px] text-slate-600 mt-1">Edge · 25s timeout · prompt opbouwen</div>
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-sky-600 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Vercel Edge</div>
+            <div style={{ height: '62px' }} />
+            <div id="e1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">/api/chat</div>
+              <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · prompt opbouwen</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="e1b" className="node n-edge text-[11px]">Streaming chunks terug naar client</div>
+            <div id="e1b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Streaming chunks terug naar client</div>
             <div style={{ height: '70px' }} />
-            <div id="e2" className="node n-edge">
-              /api/recommend
-              <div className="text-[11px] text-slate-600 mt-1">Edge · 25s timeout · 111 modellen + 8 regels</div>
+            <div id="e2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">/api/recommend</div>
+              <div className="mt-2 text-xs text-slate-600">Edge · 25s timeout · 111 modellen + 8 regels</div>
             </div>
-            <div className="arrow-down" style={{ height: '14px' }} />
-            <div id="e2b" className="node n-edge text-[11px]">JSON aanbevelingen terug naar client</div>
-            <div style={{ height: '60px' }} />
-            <div id="e3" className="node n-edge text-[11px]">/api/getting-started · Edge · 25s</div>
-            <div className="sp" />
-            <div id="e4" className="node n-edge text-[11px]">/api/hf-models · Edge · 25s</div>
-            <div className="sp" />
-            <div id="e5" className="node n-edge text-[11px]">/api/playground · Edge · 3 modellen parallel</div>
-            <div className="sp" />
-            <div id="e6" className="node n-edge text-[11px]">/api/image-gen · Node · 60s timeout</div>
+            <div id="e2b" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">JSON aanbevelingen terug naar client</div>
+            <div style={{ height: '50px' }} />
+            <div id="e3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/getting-started · Edge · 25s</div>
+            <div id="e4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/hf-models · Edge · 25s</div>
+            <div id="e5" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/playground · Edge · 3 modellen parallel</div>
+            <div id="e6" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">/api/image-gen · Node · 60s timeout</div>
           </div>
 
-          <div className="min-w-[220px] p-4 border-r border-slate-200 flex flex-col gap-3">
-            <div className="lane-head lh-groq">Groq API</div>
-            <div style={{ height: '90px' }} />
-            <div id="g1" className="node n-groq">
-              Llama 3.3 70B
-              <div className="text-[11px] text-slate-600 mt-1">Streaming response · ~300 tokens/sec</div>
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Groq API</div>
+            <div style={{ height: '94px' }} />
+            <div id="g1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Llama 3.3 70B</div>
+              <div className="mt-2 text-xs text-slate-600">Streaming response · ~300 tokens/sec</div>
+            </div>
+            <div style={{ height: '70px' }} />
+            <div id="g2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Llama 3.3 70B</div>
+              <div className="mt-2 text-xs text-slate-600">Scoort 111 modellen · past 8 regels toe · JSON output</div>
             </div>
             <div style={{ height: '80px' }} />
-            <div id="g2" className="node n-groq">
-              Llama 3.3 70B
-              <div className="text-[11px] text-slate-600 mt-1">Scoort 111 modellen · past 8 regels toe · JSON output</div>
-            </div>
-            <div style={{ height: '100px' }} />
-            <div id="g3" className="node n-groq text-[11px]">Llama 3.3 70B · use-case gids + code</div>
-            <div style={{ height: '80px' }} />
-            <div id="g4" className="node n-groq text-[11px]">3× Llama parallel · stream responses</div>
+            <div id="g3" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">Llama 3.3 70B · use-case gids + code</div>
+            <div style={{ height: '70px' }} />
+            <div id="g4" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm text-xs">3× Llama parallel · stream responses</div>
           </div>
 
-          <div className="min-w-[220px] p-4 border-r border-slate-200 flex flex-col gap-3">
-            <div className="lane-head lh-hf">HuggingFace</div>
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-sky-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">HuggingFace</div>
             <div style={{ height: '320px' }} />
-            <div id="h1" className="node n-hf">
-              Model Search API
-              <div className="text-[11px] text-slate-600 mt-1">live trending modellen</div>
+            <div id="h1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">Model Search API</div>
+              <div className="mt-2 text-xs text-slate-600">live trending modellen</div>
             </div>
             <div style={{ height: '70px' }} />
-            <div id="h2" className="node n-hf">
-              FLUX.1-schnell<br />Stable Diffusion 3
-              <div className="text-[11px] text-slate-600 mt-1">Inference API</div>
+            <div id="h2" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">FLUX.1-schnell</div>
+              <div className="text-xs text-slate-600 mt-1">Stable Diffusion 3 · Inference API</div>
             </div>
           </div>
 
-          <div className="min-w-[220px] p-4 flex flex-col gap-3">
-            <div className="lane-head lh-supa">Supabase</div>
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-emerald-700 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">Supabase</div>
             <div style={{ height: '420px' }} />
-            <div id="s1" className="node n-supa">
-              student_feedback
-              <div className="text-[11px] text-slate-600 mt-1">INSERT via anon key · RLS: alleen invoegen</div>
+            <div id="s1" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-900 shadow-sm">
+              <div className="font-semibold">student_feedback</div>
+              <div className="mt-2 text-xs text-slate-600">INSERT via anon key · RLS: alleen invoegen</div>
             </div>
           </div>
         </div>
 
-        <div className="legend mt-6">
-          <div className="leg-item"><span className="leg-dot" style={{ background: '#334155' }} />Browser / React</div>
-          <div className="leg-item"><span className="leg-dot" style={{ background: '#1d4ed8' }} />Vercel Edge Function</div>
-          <div className="leg-item"><span className="leg-dot" style={{ background: '#7c3aed' }} />Groq API (Llama 3.3 70B)</div>
-          <div className="leg-item"><span className="leg-dot" style={{ background: '#0369a1' }} />HuggingFace API</div>
-          <div className="leg-item"><span className="leg-dot" style={{ background: '#065f46' }} />Supabase (PostgreSQL)</div>
+        <div className="mt-6 flex flex-wrap gap-4 text-xs text-slate-600">
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-slate-900" />Browser / React</div>
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-sky-600" />Vercel Edge</div>
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-violet-600" />Groq API</div>
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-sky-900" />HuggingFace</div>
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-emerald-700" />Supabase</div>
         </div>
       </div>
     </div>
