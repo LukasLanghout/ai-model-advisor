@@ -6,29 +6,37 @@ type Arrow = {
   label: string;
   color: string;
   curvature?: number;
+  flow?: 'chat' | 'recommend' | 'models' | 'image' | 'connector';
 };
 
 const ARROWS: Arrow[] = [
-  { fromId: 'supabase-db', toId: 'browser-start', label: 'Laad modellen / gidsen', color: '#16a34a' },
+  // connectors from the top summary into the main columns
+  { fromId: 'summary-frontend', toId: 'browser-start', label: '', color: '#0f172a', flow: 'connector' },
+  { fromId: 'summary-edge', toId: 'edge-chat', label: '', color: '#0f172a', flow: 'connector' },
+  { fromId: 'summary-groq', toId: 'groq-prompt', label: '', color: '#0f172a', flow: 'connector' },
+  { fromId: 'summary-hf', toId: 'hf-trending', label: '', color: '#0f172a', flow: 'connector' },
+  { fromId: 'summary-supabase', toId: 'supabase-db', label: '', color: '#0f172a', flow: 'connector' },
+
+  { fromId: 'supabase-db', toId: 'browser-start', label: 'Laad modellen / gidsen', color: '#16a34a', flow: 'recommend' },
   { fromId: 'browser-start', toId: 'browser-use-case', label: 'Start session', color: '#0f172a' },
-  { fromId: 'browser-use-case', toId: 'edge-recommend', label: 'POST /api/recommend', color: '#60a5fa', curvature: 40 },
-  { fromId: 'browser-chat', toId: 'edge-chat', label: 'POST /api/chat', color: '#60a5fa', curvature: 40 },
-  { fromId: 'browser-models', toId: 'edge-models', label: 'GET /api/hf-models', color: '#60a5fa' },
-  { fromId: 'browser-image', toId: 'edge-image', label: 'POST /api/image-gen', color: '#60a5fa' },
-  { fromId: 'edge-chat', toId: 'groq-prompt', label: 'Build prompt', color: '#7c3aed' },
-  { fromId: 'groq-prompt', toId: 'groq-stream', label: 'Generate answer', color: '#7c3aed' },
-  { fromId: 'groq-stream', toId: 'browser-result-chat', label: 'Stream antwoord', color: '#1e3a8a' },
-  { fromId: 'edge-recommend', toId: 'supabase-guides', label: 'Haalt gids & metadata', color: '#16a34a', curvature: 50 },
-  { fromId: 'edge-recommend', toId: 'groq-rank', label: 'Model ranking', color: '#7c3aed' },
-  { fromId: 'groq-rank', toId: 'browser-result-recommend', label: 'Selecteer top modellen', color: '#1e3a8a' },
-  { fromId: 'edge-models', toId: 'hf-trending', label: 'Oproep naar HuggingFace', color: '#0f766e' },
-  { fromId: 'hf-trending', toId: 'browser-result-models', label: 'Resultaten tonen', color: '#1e3a8a' },
-  { fromId: 'edge-image', toId: 'hf-image', label: 'Start FLUX.1 / SD3', color: '#0f766e' },
-  { fromId: 'hf-image', toId: 'browser-result-image', label: 'Afbeelding terug', color: '#1e3a8a' },
-  { fromId: 'browser-result-chat', toId: 'final-result', label: 'Chatantwoord', color: '#334155' },
-  { fromId: 'browser-result-recommend', toId: 'final-result', label: 'Modelaanbeveling', color: '#334155' },
-  { fromId: 'browser-result-models', toId: 'final-result', label: 'Trending modellen', color: '#334155' },
-  { fromId: 'browser-result-image', toId: 'final-result', label: 'Gegenereerde afbeelding', color: '#334155' },
+  { fromId: 'browser-use-case', toId: 'edge-recommend', label: 'POST /api/recommend', color: '#0ea5a4', curvature: 40, flow: 'recommend' },
+  { fromId: 'browser-chat', toId: 'edge-chat', label: 'POST /api/chat', color: '#60a5fa', curvature: 40, flow: 'chat' },
+  { fromId: 'browser-models', toId: 'edge-models', label: 'GET /api/hf-models', color: '#0f766e', flow: 'models' },
+  { fromId: 'browser-image', toId: 'edge-image', label: 'POST /api/image-gen', color: '#fb923c', flow: 'image' },
+  { fromId: 'edge-chat', toId: 'groq-prompt', label: 'Build prompt', color: '#7c3aed', flow: 'chat' },
+  { fromId: 'groq-prompt', toId: 'groq-stream', label: 'Generate answer', color: '#7c3aed', flow: 'chat' },
+  { fromId: 'groq-stream', toId: 'browser-result-chat', label: 'Stream antwoord', color: '#1e3a8a', flow: 'chat' },
+  { fromId: 'edge-recommend', toId: 'supabase-guides', label: 'Haalt gids & metadata', color: '#16a34a', curvature: 50, flow: 'recommend' },
+  { fromId: 'edge-recommend', toId: 'groq-rank', label: 'Model ranking', color: '#7c3aed', flow: 'recommend' },
+  { fromId: 'groq-rank', toId: 'browser-result-recommend', label: 'Selecteer top modellen', color: '#1e3a8a', flow: 'recommend' },
+  { fromId: 'edge-models', toId: 'hf-trending', label: 'Oproep naar HuggingFace', color: '#0f766e', flow: 'models' },
+  { fromId: 'hf-trending', toId: 'browser-result-models', label: 'Resultaten tonen', color: '#1e3a8a', flow: 'models' },
+  { fromId: 'edge-image', toId: 'hf-image', label: 'Start FLUX.1 / SD3', color: '#0f766e', flow: 'image' },
+  { fromId: 'hf-image', toId: 'browser-result-image', label: 'Afbeelding terug', color: '#1e3a8a', flow: 'image' },
+  { fromId: 'browser-result-chat', toId: 'final-result', label: 'Chatantwoord', color: '#334155', flow: 'connector' },
+  { fromId: 'browser-result-recommend', toId: 'final-result', label: 'Modelaanbeveling', color: '#334155', flow: 'connector' },
+  { fromId: 'browser-result-models', toId: 'final-result', label: 'Trending modellen', color: '#334155', flow: 'connector' },
+  { fromId: 'browser-result-image', toId: 'final-result', label: 'Gegenereerde afbeelding', color: '#334155', flow: 'connector' },
 ];
 
 function createMarker(svg: SVGSVGElement) {
@@ -64,12 +72,25 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
   const start = getCenter(fromEl, container);
   const end = getCenter(toEl, container);
   const midX = (start.x + end.x) / 2;
-  const labelY = (start.y + end.y) / 2 + (start.y < end.y ? -18 : 18);
+  const midY = (start.y + end.y) / 2;
+  const labelY = midY + (start.y < end.y ? -16 : 16);
+
+  // simple lane offsets to reduce crossing: heuristics based on label and color
+  let laneOffset = 0;
+  if (label.includes('POST /api/chat') || label.toLowerCase().includes('chat') || color === '#60a5fa') laneOffset = -80;
+  else if (label.toLowerCase().includes('recommend') || color === '#0ea5a4') laneOffset = -20;
+  else if (color === '#0f766e') laneOffset = 60;
+  else if (color === '#fb923c') laneOffset = 120;
+
+  const c1x = midX + curvature;
+  const c1y = start.y + laneOffset;
+  const c2x = midX - curvature;
+  const c2y = end.y + laneOffset;
 
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', `M${start.x},${start.y} C${midX + curvature},${start.y} ${midX - curvature},${end.y} ${end.x},${end.y}`);
-  path.setAttribute('stroke', color);
-  path.setAttribute('stroke-width', '2');
+  path.setAttribute('d', `M${start.x},${start.y} C${c1x},${c1y} ${c2x},${c2y} ${end.x},${end.y}`);
+  path.setAttribute('stroke', '#374151');
+  path.setAttribute('stroke-width', '3');
   path.setAttribute('fill', 'none');
   path.setAttribute('marker-end', 'url(#arrowhead)');
   path.setAttribute('stroke-linecap', 'round');
@@ -81,7 +102,7 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
   text.setAttribute('y', String(labelY));
   text.setAttribute('text-anchor', 'middle');
   text.setAttribute('font-size', '12');
-  text.setAttribute('fill', '#334155');
+  text.setAttribute('fill', '#0f172a');
   text.setAttribute('font-family', 'Segoe UI, sans-serif');
   text.textContent = label;
   svg.appendChild(text);
@@ -93,8 +114,8 @@ function drawArrow(svg: SVGSVGElement, container: HTMLElement, fromEl: HTMLEleme
   rect.setAttribute('y', String(bbox.y - pad));
   rect.setAttribute('width', String(bbox.width + pad * 2));
   rect.setAttribute('height', String(bbox.height + pad * 2));
-  rect.setAttribute('fill', 'rgba(255,255,255,0.97)');
-  rect.setAttribute('stroke', '#e2e8f0');
+  rect.setAttribute('fill', 'rgba(255,255,255,0.98)');
+  rect.setAttribute('stroke', '#e6eef6');
   rect.setAttribute('stroke-width', '1');
   rect.setAttribute('rx', '6');
   rect.setAttribute('ry', '6');
@@ -143,46 +164,46 @@ export default function ArchitectuurDiagram() {
       <div className="relative w-full min-h-[920px] p-5" ref={containerRef}>
         <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
-        <div className="space-y-5">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 shadow-sm">
-            <div className="font-semibold text-slate-900 mb-3">Architectuursamenvatting</div>
-            <div className="grid gap-3 text-center text-xs sm:grid-cols-6 sm:text-sm">
-              <div className="rounded-2xl bg-slate-900 px-3 py-2 text-white">Gebruiker</div>
+        <div className="space-y-3">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 shadow-sm">
+            <div className="font-semibold text-slate-900 mb-2">Architectuursamenvatting</div>
+            <div className="grid gap-2 text-center text-xs sm:grid-cols-6 sm:text-sm">
+              <div id="summary-user" className="rounded-2xl bg-slate-900 px-3 py-1 text-white text-[11px]">Gebruiker</div>
               <div className="flex items-center justify-center text-slate-400">↓</div>
-              <div className="rounded-2xl bg-sky-900 px-3 py-2 text-white">React Frontend</div>
+              <div id="summary-frontend" className="rounded-2xl bg-sky-900 px-3 py-1 text-white text-[11px]">React Frontend</div>
               <div className="flex items-center justify-center text-slate-400">↓</div>
-              <div className="rounded-2xl bg-sky-300 px-3 py-2 text-slate-900">Vercel Edge API</div>
+              <div id="summary-edge" className="rounded-2xl bg-sky-300 px-3 py-1 text-slate-900 text-[11px]">Vercel Edge API</div>
               <div className="flex items-center justify-center text-slate-400">↓</div>
-              <div className="rounded-2xl bg-violet-500 px-3 py-2 text-white">Groq / HuggingFace</div>
+              <div id="summary-groq" className="rounded-2xl bg-violet-500 px-3 py-1 text-white text-[11px]">Groq / HuggingFace</div>
               <div className="flex items-center justify-center text-slate-400">↓</div>
-              <div className="rounded-2xl bg-emerald-600 px-3 py-2 text-white">Supabase</div>
+              <div id="summary-supabase" className="rounded-2xl bg-emerald-600 px-3 py-1 text-white text-[11px]">Supabase</div>
               <div className="flex items-center justify-center text-slate-400">↓</div>
-              <div className="rounded-2xl bg-slate-900 px-3 py-2 text-white">Resultaat</div>
+              <div id="summary-result" className="rounded-2xl bg-slate-900 px-3 py-1 text-white text-[11px]">Resultaat</div>
             </div>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-5">
-            <div className="space-y-4">
-              <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">Browser / React</div>
-              <div id="browser-start" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+          <div className="grid gap-4 xl:grid-cols-5 items-start">
+            <div className="space-y-3">
+              <div className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] text-white">Browser / React</div>
+              <div id="browser-start" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">App start</div>
-                <div className="mt-2 text-slate-600">Initieert UI en laadt data</div>
+                <div className="mt-1 text-slate-700 text-sm">Initieert UI en laadt data</div>
               </div>
-              <div id="browser-use-case" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+              <div id="browser-use-case" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">Use case kiezen</div>
-                <div className="mt-2 text-slate-600">Gebruiker selecteert scenario</div>
+                <div className="mt-1 text-slate-700 text-sm">Gebruiker selecteert scenario</div>
               </div>
-              <div id="browser-chat" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+              <div id="browser-chat" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">Vraag stellen</div>
-                <div className="mt-2 text-slate-600">Gebruiker verzendt chatvraag</div>
+                <div className="mt-1 text-slate-700 text-sm">Gebruiker verzendt chatvraag</div>
               </div>
-              <div id="browser-models" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+              <div id="browser-models" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">Model discovery</div>
-                <div className="mt-2 text-slate-600">Toont trending modellen</div>
+                <div className="mt-1 text-slate-700 text-sm">Toont trending modellen</div>
               </div>
-              <div id="browser-image" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm">
+              <div id="browser-image" className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-base shadow-sm">
                 <div className="font-semibold text-slate-900">Image request</div>
-                <div className="mt-2 text-slate-600">Gebruiker vraagt afbeelding</div>
+                <div className="mt-1 text-slate-700 text-sm">Gebruiker vraagt afbeelding</div>
               </div>
             </div>
 
@@ -253,14 +274,14 @@ export default function ArchitectuurDiagram() {
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700 shadow-sm">
-            <div id="final-result" className="rounded-3xl bg-white p-5 text-center text-slate-900 shadow-sm">
+            <div id="final-result" className="rounded-3xl bg-emerald-50 p-5 text-center text-slate-900 shadow-sm">
               <div className="text-base font-semibold">Resultaat</div>
-              <div className="mt-3 text-slate-600">Eindresultaat dat alle flows samenbrengt</div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2 md:grid-cols-4 text-left text-sm text-slate-600">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Chatantwoord</div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Modelaanbeveling</div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Trending modellen</div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Gegenereerde afbeelding</div>
+              <div className="mt-3 text-slate-700">Eindresultaat dat alle flows samenbrengt</div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4 text-left text-sm text-slate-700">
+                <div className="rounded-3xl border border-emerald-200 bg-white px-3 py-3 shadow-sm">Chatantwoord</div>
+                <div className="rounded-3xl border border-emerald-200 bg-white px-3 py-3 shadow-sm">Modelaanbeveling</div>
+                <div className="rounded-3xl border border-emerald-200 bg-white px-3 py-3 shadow-sm">Trending modellen</div>
+                <div className="rounded-3xl border border-emerald-200 bg-white px-3 py-3 shadow-sm">Gegenereerde afbeelding</div>
               </div>
             </div>
           </div>
