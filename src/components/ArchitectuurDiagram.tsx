@@ -140,159 +140,141 @@ export default function ArchitectuurDiagram() {
       <div className="relative min-w-[2800px] min-h-[760px] p-5" ref={containerRef}>
         <svg ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" />
 
-        <div className="grid min-w-[2800px] grid-cols-5 gap-8 text-sm text-slate-800">
-          <div className="min-w-[360px] space-y-5">
+        <div className="grid min-w-[3400px] grid-cols-[240px_minmax(0,1fr)] gap-6 text-sm text-slate-800">
+          <div className="space-y-6">
             <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Browser / React</div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n1" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+            <div className="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Vercel Edge</div>
+            <div className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Groq API</div>
+            <div className="rounded-2xl bg-sky-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">HuggingFace</div>
+            <div className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Supabase</div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="grid grid-flow-col auto-cols-max gap-4">
+              <div id="n1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">App start</div>
                 <div className="mt-2 text-sm text-slate-600">Laadt modellen, prijzen en GDPR-data</div>
               </div>
-              <div id="n2" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Gebruiker kiest</div>
-                <div className="mt-2 text-sm text-slate-600">Start advies, kies use case of model</div>
+                <div className="mt-2 text-sm text-slate-600">Start advies en kiest use case</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n3" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">POST /api/chat</div>
-                <div className="mt-2 text-sm text-slate-600">Verstuurt de vraag + context naar Edge</div>
+                <div className="mt-2 text-sm text-slate-600">Verstuurt vraag + context</div>
               </div>
-              <div id="n4" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Streaming antwoord</div>
                 <div className="mt-2 text-sm text-slate-600">UI toont chunks terwijl Groq streamt</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n6" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
-                <div className="text-sm font-semibold">POST /api/recommend</div>
-                <div className="mt-2 text-sm text-slate-600">Stuurt scenario en modeldata naar Edge</div>
+              <div id="n5" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
+                <div className="text-sm font-semibold">Scenario bouwen</div>
+                <div className="mt-2 text-sm text-slate-600">Vormt scenario met modeldata</div>
               </div>
-              <div id="n7" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n6" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
+                <div className="text-sm font-semibold">POST /api/recommend</div>
+                <div className="mt-2 text-sm text-slate-600">Stuurt scenario + modellen naar Edge</div>
+              </div>
+              <div id="n7" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Toon aanbevelingen</div>
                 <div className="mt-2 text-sm text-slate-600">UI toont ranking, score en reasoning</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n9" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n9" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Getting started</div>
-                <div className="mt-2 text-sm text-slate-600">Laadt use case gids en codevoorbeelden</div>
+                <div className="mt-2 text-sm text-slate-600">Laadt gidsen en codevoorbeelden</div>
               </div>
-              <div id="n10" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n10" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Model Explorer</div>
                 <div className="mt-2 text-sm text-slate-600">Zoekt en toont trending modellen</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n11" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n11" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Playground</div>
                 <div className="mt-2 text-sm text-slate-600">Voert prompts uit met meerdere modellen</div>
               </div>
-              <div id="n12" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n12" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Image gen</div>
                 <div className="mt-2 text-sm text-slate-600">Genereert afbeeldingen via API</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="n13" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n13" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">PDF export</div>
                 <div className="mt-2 text-sm text-slate-600">Maakt rapporten en samenvattingen</div>
               </div>
-              <div id="n14" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="n14" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Feedback</div>
-                <div className="mt-2 text-sm text-slate-600">Verstuurt gebruikersfeedback naar Supabase</div>
+                <div className="mt-2 text-sm text-slate-600">Verstuurt feedback naar Supabase</div>
               </div>
             </div>
-          </div>
 
-          <div className="min-w-[360px] space-y-5">
-            <div className="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Vercel Edge</div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="e1" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+            <div className="grid grid-flow-col auto-cols-max gap-4">
+              <div id="e1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/chat</div>
                 <div className="mt-2 text-sm text-slate-600">Opbouw prompt en doorsturen naar Groq</div>
               </div>
-              <div id="e1b" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e1b" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Streaming</div>
-                <div className="mt-2 text-sm text-slate-600">Stuur SSE chunks terug naar browser</div>
+                <div className="mt-2 text-sm text-slate-600">SSE chunks terug naar browser</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="e2" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/recommend</div>
                 <div className="mt-2 text-sm text-slate-600">Rankt 111 modellen en geeft reasoning</div>
               </div>
-              <div id="e2b" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e2b" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">JSON antwoord</div>
                 <div className="mt-2 text-sm text-slate-600">Bevat score, ranking en aanbeveling</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="e3" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/getting-started</div>
-                <div className="mt-2 text-sm text-slate-600">Bereidt use case gids voor</div>
+                <div className="mt-2 text-sm text-slate-600">Bereidt gidsen voor</div>
               </div>
-              <div id="e4" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/hf-models</div>
-                <div className="mt-2 text-sm text-slate-600">Zoekt trending modellen bij HuggingFace</div>
+                <div className="mt-2 text-sm text-slate-600">Zoekt trending modellen</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="e5" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e5" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/playground</div>
                 <div className="mt-2 text-sm text-slate-600">3 modellen parallel uitvoeren</div>
               </div>
-              <div id="e6" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="e6" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">/api/image-gen</div>
-                <div className="mt-2 text-sm text-slate-600">Start beeldgeneratie via API</div>
+                <div className="mt-2 text-sm text-slate-600">Start beeldgeneratie</div>
               </div>
             </div>
-          </div>
 
-          <div className="min-w-[360px] space-y-5">
-            <div className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Groq API</div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="g1" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+            <div className="grid grid-flow-col auto-cols-max gap-4">
+              <div id="g1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Llama 3.3 70B chat</div>
                 <div className="mt-2 text-sm text-slate-600">Streamt antwoord en genereert prompt</div>
               </div>
-              <div id="g2" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="g2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Llama 3.3 70B ranking</div>
                 <div className="mt-2 text-sm text-slate-600">Rangt 111 modellen en geeft reasoning</div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="g3" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="g3" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Use case gids</div>
-                <div className="mt-2 text-sm text-slate-600">Prepareert code & uitleg</div>
+                <div className="mt-2 text-sm text-slate-600">Bereidt uitleg en code voor</div>
               </div>
-              <div id="g4" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="g4" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Parallel inference</div>
                 <div className="mt-2 text-sm text-slate-600">3× tegelijk resultaten terug</div>
               </div>
             </div>
-          </div>
 
-          <div className="min-w-[360px] space-y-5">
-            <div className="rounded-2xl bg-sky-900 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">HuggingFace</div>
-            <div className="grid grid-cols-2 gap-4">
-              <div id="h1" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+            <div className="grid grid-flow-col auto-cols-max gap-4">
+              <div id="h1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">Model Search API</div>
-                <div className="mt-2 text-sm text-slate-600">Haalt trending modellen op</div>
+                <div className="mt-2 text-sm text-slate-600">Haal trending modellen op</div>
               </div>
-              <div id="h2" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
+              <div id="h2" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
                 <div className="text-sm font-semibold">FLUX.1 / SD3</div>
                 <div className="mt-2 text-sm text-slate-600">Image inference via HuggingFace</div>
               </div>
             </div>
-          </div>
 
-          <div className="min-w-[360px] space-y-5">
-            <div className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white">Supabase</div>
-            <div className="h-[240px]" />
-            <div id="s1" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm">
-              <div className="text-sm font-semibold">student_feedback</div>
-              <div className="mt-2 text-sm text-slate-600">INSERT via anon key · alleen opnemen</div>
+            <div className="grid grid-flow-col auto-cols-max gap-4">
+              <div id="s1" className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-slate-900 shadow-sm w-[260px]">
+                <div className="text-sm font-semibold">student_feedback</div>
+                <div className="mt-2 text-sm text-slate-600">INSERT via anon key · alleen toevoegen</div>
+              </div>
             </div>
           </div>
         </div>
