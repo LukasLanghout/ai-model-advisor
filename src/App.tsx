@@ -1,44 +1,50 @@
 import { useState } from 'react';
-import type { AppStep, UserScenario, RecommendationResult } from './types';
+import { AnimatePresence, motion } from 'framer-motion';
+import type { AppStep, ExtractedScenario, RecommendationResult } from './types';
 import Header from './components/Layout/Header';
 import IntroScreen from './components/IntroScreen';
-import QuestionnaireFlow from './components/Questionnaire/QuestionnaireFlow';
+import ConversationView from './components/Conversation/ConversationView';
 import LoadingScreen from './components/LoadingScreen';
 import RecommendationsView from './components/Results/RecommendationsView';
-import { saveScenario } from './lib/supabase';
+import ModelSearchPage from './components/ModelExplorer/ModelSearchPage';
+import FeedbackWidget from './components/FeedbackWidget';
+import ArchitectuurPage from './components/ArchitectuurPage';
 
-const emptyScenario: UserScenario = {
-  useCase: null,
-  scale: null,
-  latency: null,
-  budget: null,
-  privacy: null,
-  integration: null,
-};
-
-function generateSessionId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+function getInitialStep(): AppStep {
+  if (window.location.pathname === '/architectuuroverzicht') return 'architectuur';
+  return 'intro';
 }
 
 export default function App() {
-  const [appStep, setAppStep] = useState<AppStep>('intro');
-  const [scenario, setScenario] = useState<UserScenario>(emptyScenario);
-  const [result, setResult] = useState<RecommendationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [sessionId] = useState(generateSessionId);
+  const [appStep, setAppStep]   = useState<AppStep>(getInitialStep);
+  const [prevStep, setPrevStep] = useState<AppStep>('intro');
+  const [scenario, setScenario] = useState<ExtractedScenario | null>(null);
+  const [result, setResult]     = useState<RecommendationResult | null>(null);
+  const [error, setError]       = useState<string | null>(null);
 
-  async function handleSubmit(finalScenario: UserScenario) {
-    setScenario(finalScenario);
-    setAppStep('loading');
+  function goTo(step: AppStep) {
+    setPrevStep(appStep);
+    setAppStep(step);
+  }
+
+  function toggleExplorer() {
+    if (appStep === 'explorer') {
+      setAppStep(prevStep === 'explorer' ? 'intro' : prevStep);
+    } else {
+      goTo('explorer');
+    }
+  }
+
+  async function handleScenarioReady(extractedScenario: ExtractedScenario) {
+    setScenario(extractedScenario);
+    goTo('loading');
     setError(null);
-
-    await saveScenario(sessionId, finalScenario);
 
     try {
       const res = await fetch('/api/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario: finalScenario }),
+        body: JSON.stringify({ scenario: extractedScenario }),
       });
 
       if (!res.ok) {
@@ -48,15 +54,15 @@ export default function App() {
 
       const data: RecommendationResult = await res.json();
       setResult(data);
-      setAppStep('results');
+      goTo('results');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden.');
-      setAppStep('questionnaire');
+      setAppStep('conversation');
     }
   }
 
   function handleRestart() {
-    setScenario(emptyScenario);
+    setScenario(null);
     setResult(null);
     setError(null);
     setAppStep('intro');
@@ -64,27 +70,54 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1">
-        {appStep === 'intro' && <IntroScreen onStart={() => setAppStep('questionnaire')} />}
-        {appStep === 'questionnaire' && (
-          <QuestionnaireFlow
-            onSubmit={handleSubmit}
-            initialScenario={scenario}
-            apiError={error}
-          />
-        )}
-        {appStep === 'loading' && <LoadingScreen />}
-        {appStep === 'results' && result && (
-          <RecommendationsView
-            result={result}
-            scenario={scenario}
-            sessionId={sessionId}
-            onRestart={handleRestart}
-          />
-        )}
+      <Header onExplorer={toggleExplorer} explorerActive={appStep === 'explorer'} />
+
+      <main id="main-content" className="flex-1">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={appStep}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            {appStep === 'explorer' && <ModelSearchPage />}
+
+            {appStep === 'intro' && (
+              <IntroScreen onStart={() => goTo('conversation')} />
+            )}
+
+            {appStep === 'conversation' && (
+              <div>
+                {error && (
+                  <div className="max-w-2xl mx-auto px-4 pt-4">
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+                      {error}
+                    </div>
+                  </div>
+                )}
+                <ConversationView onReady={handleScenarioReady} />
+              </div>
+            )}
+
+            {appStep === 'loading' && <LoadingScreen />}
+
+            {appStep === 'results' && result && scenario && (
+              <RecommendationsView
+                result={result}
+                scenario={scenario}
+                onRestart={handleRestart}
+              />
+            )}
+
+            {appStep === 'architectuur' && <ArchitectuurPage />}
+          </motion.div>
+        </AnimatePresence>
       </main>
-      <footer className="py-6 text-center text-sm text-slate-400 border-t border-slate-200">
+
+      <FeedbackWidget screen={appStep} />
+
+      <footer className="no-print py-6 text-center text-sm text-slate-400 border-t border-slate-200">
         Gebouwd door{' '}
         <a
           href="https://github.com/LukasLanghout"
@@ -94,7 +127,7 @@ export default function App() {
         >
           Lukas Langhout
         </a>{' '}
-        · Aangedreven door Claude API
+        · Aangedreven door Llama 3.3 via Groq
       </footer>
     </div>
   );

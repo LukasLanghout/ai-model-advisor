@@ -2,17 +2,31 @@ import { Brain } from 'lucide-react';
 
 export default function LoadingScreen() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
+    /* role="status" + aria-live so screen readers announce the loading state */
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Aanbevelingen worden geladen"
+      className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in"
+    >
       <div className="relative mb-6">
-        <div className="w-16 h-16 rounded-2xl bg-brand-600 flex items-center justify-center">
+        <div
+          className="w-16 h-16 rounded-lg bg-brand-600 flex items-center justify-center"
+          aria-hidden="true"
+        >
           <Brain className="w-8 h-8 text-white" />
         </div>
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping" />
+        <span
+          className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping"
+          aria-hidden="true"
+        />
       </div>
-      <h2 className="text-xl font-semibold text-slate-900 mb-2">Claude analyseert jouw scenario…</h2>
-      <p className="text-slate-500 text-sm">Dit duurt normaal 5–10 seconden.</p>
+      <h2 className="text-xl font-semibold text-slate-900 mb-2">
+        Llama 3.3 analyseert jouw scenario…
+      </h2>
+      <p className="text-slate-500 text-sm">Via Groq — normaal binnen 3–5 seconden.</p>
 
-      <div className="mt-8 flex gap-2">
+      <div className="mt-8 flex gap-2" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <span
             key={i}

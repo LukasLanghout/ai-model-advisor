@@ -1,38 +1,131 @@
 import { useState } from 'react';
-import { RotateCcw, Lightbulb, Star } from 'lucide-react';
-import type { RecommendationResult, UserScenario } from '../../types';
+import { pdf } from '@react-pdf/renderer';
+import { RotateCcw, Lightbulb, FileDown, Loader2, ChevronDown } from 'lucide-react';
+import type { RecommendationResult, ExtractedScenario, GettingStartedResult } from '../../types';
 import ModelCard from './ModelCard';
-import { saveFeedback } from '../../lib/supabase';
+import CostCalculator from './CostCalculator';
+import PlaygroundView from './PlaygroundView';
+import ComplianceTable from './ComplianceTable';
+import DecisionTree from './DecisionTree';
+import GettingStartedView from './GettingStartedView';
+import PdfReport from './PdfReport';
 
 interface Props {
   result: RecommendationResult;
-  scenario: UserScenario;
-  sessionId: string;
+  scenario: ExtractedScenario;
   onRestart: () => void;
 }
 
-export default function RecommendationsView({ result, sessionId, onRestart }: Props) {
-  const [rating, setRating] = useState<number | null>(null);
-  const [feedbackSaved, setFeedbackSaved] = useState(false);
+const TABS = [
+  { id: 'aanbevelingen', label: 'Aanbevelingen' },
+  { id: 'aan-de-slag',   label: '🚀 Aan de slag' },
+  { id: 'beslissing',    label: 'Beslissingspad' },
+  { id: 'kosten',        label: 'Kosten' },
+  { id: 'playground',   label: 'Playground' },
+  { id: 'compliance',   label: 'Compliance' },
+] as const;
 
-  async function handleRating(r: number) {
-    setRating(r);
-    const topRec = result.recommendations[0]?.modelName ?? '';
-    await saveFeedback(sessionId, r, topRec);
-    setFeedbackSaved(true);
+type TabId = (typeof TABS)[number]['id'];
+
+export default function RecommendationsView({ result, scenario, onRestart }: Props) {
+  const [activeTab, setActiveTab]           = useState<TabId>('aanbevelingen');
+  const [selectedRecIndex, setSelectedRecIndex] = useState(0);
+  const [gettingStartedData, setGettingStartedData] = useState<GettingStartedResult | null>(null);
+  const [pdfLoading, setPdfLoading]         = useState(false);
+
+  const selectedRec = result.recommendations[selectedRecIndex] ?? result.recommendations[0];
+
+  async function handleDownloadPdf() {
+    setPdfLoading(true);
+    try {
+      const now = new Date().toLocaleDateString('nl-NL', {
+        day: 'numeric', month: 'long', year: 'numeric',
+      });
+
+      // If getting-started data isn't loaded yet, fetch it now
+      let gsData = gettingStartedData;
+      if (!gsData) {
+        const res = await fetch('/api/getting-started', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            modelId: selectedRec.modelId,
+            modelName: selectedRec.modelName,
+            provider: selectedRec.provider,
+            type: selectedRec.type,
+            useCase: scenario.useCase,
+            scenario: scenario.description,
+          }),
+        });
+        if (res.ok) {
+          gsData = await res.json() as GettingStartedResult;
+          setGettingStartedData(gsData);
+        }
+      }
+
+      const blob = await pdf(
+        <PdfReport
+          result={result}
+          scenario={scenario}
+          gettingStarted={gsData}
+          selectedModel={{ modelName: selectedRec.modelName, provider: selectedRec.provider }}
+          generatedAt={now}
+        />
+      ).toBlob();
+
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href     = url;
+      link.download = `AI-Model-Adviesrapport-${selectedRec.modelName.replace(/[^a-z0-9]/gi, '-')}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setPdfLoading(false);
+    }
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 animate-slide-up">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 animate-slide-up">
+
+      {/* Header */}
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Jouw AI aanbeveling</h2>
+          <p className="text-sm text-slate-500 mt-1">Op basis van je discovery gesprek</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={pdfLoading}
+            aria-label="Download rapport als PDF"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {pdfLoading
+              ? <><Loader2 className="w-4 h-4 animate-spin" />Genereren…</>
+              : <><FileDown className="w-4 h-4" />Download rapport (PDF)</>}
+          </button>
+          <button
+            type="button"
+            onClick={onRestart}
+            aria-label="Opnieuw beginnen"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Opnieuw
+          </button>
+        </div>
+      </div>
+
       {/* Summary */}
-      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-2xl p-6 sm:p-8 mb-8 text-white">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-2">Jouw aanbeveling</p>
+      <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-lg p-6 sm:p-8 mb-6 text-white">
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand-200 mb-2">Samenvatting</p>
         <p className="text-base sm:text-lg leading-relaxed">{result.summary}</p>
       </div>
 
       {/* Key considerations */}
       {result.keyConsiderations?.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Lightbulb className="w-4 h-4 text-amber-600" />
             <span className="text-sm font-semibold text-amber-800">Belangrijke overwegingen</span>
@@ -48,54 +141,112 @@ export default function RecommendationsView({ result, sessionId, onRestart }: Pr
         </div>
       )}
 
-      {/* Recommendations */}
-      <h2 className="font-bold text-slate-900 text-lg mb-4">
-        Aanbevolen modellen ({result.recommendations.length})
-      </h2>
-      <div className="space-y-4 mb-10">
-        {result.recommendations.map((rec, i) => (
-          <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
-        ))}
+      {/* Tabs */}
+      <div className="border-b border-slate-200 mb-6">
+        <div role="tablist" aria-label="Resultaat secties" className="flex gap-1 overflow-x-auto">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              id={`tab-${tab.id}`}
+              aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-shrink-0 px-4 py-2.5 min-h-[44px] text-sm font-medium border-b-2 transition-colors focus-visible:outline-2 focus-visible:outline-brand-500 focus-visible:outline-offset-2 ${
+                activeTab === tab.id
+                  ? 'border-brand-600 text-brand-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Feedback */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-8 text-center">
-        <p className="font-semibold text-slate-800 mb-1">Hoe nuttig was deze aanbeveling?</p>
-        <p className="text-sm text-slate-500 mb-4">Jouw feedback helpt de tool verbeteren.</p>
-        {feedbackSaved ? (
-          <p className="text-sm text-green-600 font-medium">Bedankt voor je feedback!</p>
-        ) : (
-          <div className="flex items-center justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => handleRating(r)}
-                className={`w-10 h-10 rounded-xl border-2 transition-all flex items-center justify-center ${
-                  rating === r
-                    ? 'border-brand-500 bg-brand-50'
-                    : 'border-slate-200 hover:border-brand-300'
-                }`}
-              >
-                <Star
-                  className={`w-5 h-5 ${rating !== null && r <= rating ? 'text-brand-500 fill-brand-500' : 'text-slate-300'}`}
-                />
-              </button>
-            ))}
+      {/* Tab panels */}
+      <div className="min-h-[400px]">
+        {TABS.map((tab) => (
+          <div
+            key={tab.id}
+            role="tabpanel"
+            id={`tabpanel-${tab.id}`}
+            aria-labelledby={`tab-${tab.id}`}
+            hidden={activeTab !== tab.id}
+          >
+            {activeTab === tab.id && (
+              <>
+                {tab.id === 'aanbevelingen' && (
+                  <div className="space-y-4">
+                    {result.topThreeComparison && (
+                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-600">
+                        <span className="font-semibold text-slate-700">Top 3 vergelijking: </span>
+                        {result.topThreeComparison}
+                      </div>
+                    )}
+                    {result.recommendations.map((rec, i) => (
+                      <ModelCard key={rec.modelId} rec={rec} isTop={i === 0} />
+                    ))}
+                  </div>
+                )}
+
+                {tab.id === 'aan-de-slag' && (
+                  <div className="space-y-6">
+                    {/* Model selector */}
+                    <div className="bg-white border border-slate-200 rounded-lg p-4">
+                      <label htmlFor="model-select" className="block text-xs font-medium text-slate-600 mb-2">
+                        Voor welk model wil je de gids?
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="model-select"
+                          value={selectedRecIndex}
+                          onChange={(e) => {
+                            setSelectedRecIndex(Number(e.target.value));
+                            setGettingStartedData(null);
+                          }}
+                          className="w-full appearance-none text-sm border border-slate-200 rounded-lg px-3 py-2.5 pr-8 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                        >
+                          {result.recommendations.map((rec, i) => (
+                            <option key={rec.modelId} value={i}>
+                              #{rec.rank} {rec.modelName} ({rec.provider}) — score {rec.score.toFixed(1)}/10
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    <GettingStartedView
+                      rec={selectedRec}
+                      useCase={scenario.useCase}
+                      scenario={scenario.description}
+                      onDataLoaded={setGettingStartedData}
+                    />
+                  </div>
+                )}
+
+                {tab.id === 'beslissing' && (
+                  <DecisionTree
+                    decisionFactors={result.decisionFactors}
+                    topRecommendation={result.recommendations[0]}
+                    summary={result.summary}
+                  />
+                )}
+                {tab.id === 'kosten' && (
+                  <CostCalculator recommendations={result.recommendations} />
+                )}
+                {tab.id === 'playground' && (
+                  <PlaygroundView />
+                )}
+                {tab.id === 'compliance' && (
+                  <ComplianceTable recommendations={result.recommendations} />
+                )}
+              </>
+            )}
           </div>
-        )}
-      </div>
-
-      {/* Restart */}
-      <div className="text-center">
-        <button
-          type="button"
-          onClick={onRestart}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Opnieuw starten
-        </button>
+        ))}
       </div>
     </div>
   );
